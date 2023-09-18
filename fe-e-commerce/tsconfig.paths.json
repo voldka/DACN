@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@layouts/*": ["./shared/layouts/*"],
+      "@components/*": ["./shared/components/*"],
+      "@services/*": ["./shared/services/*"],
+      "@utils/*": ["./shared/utils/*"],
+      "@interfaces/*": ["./shared/types/interfaces/*"],
+      "@slices/*": ["./shared/stores/slices/*"],
+      "@selectors/*": ["./shared/stores/selectors/*"],
+      "@hooks/*": ["./shared/hooks/*"]
+    }
+  }
+}
