@@ -25,7 +25,6 @@ app.use("/api/user", UserRouter);
 app.use("/api/product", ProductRouter);
 app.use("/api/order", OrderRouter);
 app.use("/api/payment", PaymentRouter);
-
 mongoose
   .connect(`${process.env.MONGO_DB}`)
   .then(() => {

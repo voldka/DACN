@@ -15,7 +15,6 @@ router.get(
   authUserMiddleWare,
   userController.getDetailsUser
 );
-
 router.post("/refresh-token", userController.refreshToken);
 
 router.get("/getAll", authMiddleWare, userController.getAllUser);

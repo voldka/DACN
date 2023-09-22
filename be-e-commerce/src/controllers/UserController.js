@@ -8,13 +8,13 @@ const createUser = async (req, res) => {
     const { error } = validationSchema.signUpBodyValidation(req.body);
     if (error)
       return res
-        .status(300)
+        .status(401)
         .json({ error: true, message: error.details[0].message });
 
     const response = await UserService.createUser(req.body);
     return response.status == "OK"
       ? res.status(200).json(response)
-      : res.status(300).json({
+      : res.status(401).json({
           status: "INFO",
           message: "The email is already",
         });
@@ -30,7 +30,7 @@ const loginUser = async (req, res) => {
     const { error } = validationSchema.logInBodyValidation(req.body);
     if (error)
       return res
-        .status(300)
+        .status(401)
         .json({ error: true, message: error.details[0].message });
     const response = await UserService.loginUser(req.body);
     const { refresh_token, ...newReponse } = response;
@@ -42,7 +42,7 @@ const loginUser = async (req, res) => {
     });
     return res.status(200).json({ ...newReponse });
   } catch (e) {
-    return res.status(404).json({
+    return res.status(401).json({
       message: e,
     });
   }

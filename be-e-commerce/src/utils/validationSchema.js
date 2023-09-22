@@ -36,10 +36,41 @@ const updateProfileBodyValidation = (body) => {
   });
   return schema.validate(body);
 };
+const createProductSchemaBodyValidation = (body) => {
+  const schema = Joi.object({
+    name: Joi.string().required().label("name"),
+    image: Joi.string().required().label("image"),
+    type: Joi.string().required().label("type"),
+    price: Joi.number().min(0).required().label("price"),
+    countInStock: Joi.number().min(0).required().label("countInStock"),
+    rating: Joi.number().min(0).max(5).required().label("rating"),
 
+    description: Joi.string().label("description"),
+    discount: Joi.number().min(0).max(99).label("discount"),
+    selled: Joi.number().min(0).label("selled"),
+  });
+  return schema.validate(body);
+};
+const updateProductSchemaBodyValidation = (body) => {
+  const schema = Joi.object({
+    name: Joi.string().label("name"),
+    image: Joi.string().label("image"),
+    type: Joi.string().label("type"),
+    price: Joi.number().min(0).label("price"),
+    countInStock: Joi.number().min(0).label("countInStock"),
+    rating: Joi.number().min(0).max(5).label("rating"),
+
+    description: Joi.string().label("description"),
+    discount: Joi.number().min(0).max(99).label("discount"),
+    selled: Joi.number().min(0).label("selled"),
+  });
+  return schema.validate(body);
+};
 module.exports = {
   signUpBodyValidation,
   logInBodyValidation,
   refreshTokenBodyValidation,
   updateProfileBodyValidation,
+  createProductSchemaBodyValidation,
+  updateProductSchemaBodyValidation,
 };
