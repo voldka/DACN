@@ -1,4 +1,7 @@
 const Product = require("../models/ProductModel");
+const multer = require("multer");
+var fs = require("fs");
+var path = require("path");
 
 const createProduct = (newProduct) => {
   return new Promise(async (resolve, reject) => {

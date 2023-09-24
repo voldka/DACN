@@ -1,5 +1,21 @@
 const ProductService = require("../services/ProductService");
 const validationSchema = require("../utils/validationSchema");
+const multer = require("multer");
+var fs = require("fs");
+var path = require("path");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+const upload = multer({ storage: storage });
 
 const createProduct = async (req, res) => {
   try {
@@ -11,12 +27,19 @@ const createProduct = async (req, res) => {
         .status(401)
         .json({ error: true, message: error.details[0].message });
 
-    const response = await ProductService.createProduct(req.body);
+    const obj = {
+      ...req.body, // Copy all properties from req.body
+      image: {
+        data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
+        contentType: "image/png",
+      },
+    };
 
+    const response = await ProductService.createProduct(obj);
     return res.status(200).json(response);
   } catch (e) {
     return res.status(404).json({
-      message: e,
+      message: e.message,
     });
   }
 };
@@ -34,13 +57,20 @@ const updateProduct = async (req, res) => {
     const { error } = validationSchema.updateProductSchemaBodyValidation(
       req.body
     );
-
     if (error)
       return res
         .status(401)
         .json({ error: true, message: error.details[0].message });
 
-    const response = await ProductService.updateProduct(productId, req.body);
+    const obj = {
+      ...req.body, // Copy all properties from req.body
+      image: {
+        data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
+        contentType: "image/png",
+      },
+    };
+    console.log(obj.image);
+    const response = await ProductService.updateProduct(productId, obj);
     return res.status(200).json(response);
   } catch (e) {
     return res.status(404).json({
@@ -139,6 +169,5 @@ module.exports = {
   getAllProduct,
   deleteMany,
   getAllType,
-  uploadmultiple,
-  uploadfile,
+  upload,
 };
