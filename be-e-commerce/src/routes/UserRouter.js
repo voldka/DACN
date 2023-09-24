@@ -6,6 +6,9 @@ const {
   authUserMiddleWare,
 } = require("../middleware/authMiddleware");
 
+router.post("/forgot-password", userController.forgotPasswordUser);
+router.post("/password-reset/:userId/:token", userController.resetPasswordUser);
+router.post("/change-password", userController.changePasswordUser);
 router.post("/sign-up", userController.createUser);
 router.post("/sign-in", userController.loginUser);
 router.post("/log-out", userController.logoutUser);

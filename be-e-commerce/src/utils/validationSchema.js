@@ -39,7 +39,9 @@ const updateProfileBodyValidation = (body) => {
 const createProductSchemaBodyValidation = (body) => {
   const schema = Joi.object({
     name: Joi.string().required().label("name"),
-    image: Joi.string().required().label("image"),
+    image: Joi.binary()
+      .encoding("base64")
+      .valid("jpg", "jpeg", "png", "gif", "bmp"),
     type: Joi.string().required().label("type"),
     price: Joi.number().min(0).required().label("price"),
     countInStock: Joi.number().min(0).required().label("countInStock"),
@@ -54,7 +56,9 @@ const createProductSchemaBodyValidation = (body) => {
 const updateProductSchemaBodyValidation = (body) => {
   const schema = Joi.object({
     name: Joi.string().label("name"),
-    image: Joi.string().label("image"),
+    image: Joi.binary()
+      .encoding("base64")
+      .valid("jpg", "jpeg", "png", "gif", "bmp"),
     type: Joi.string().label("type"),
     price: Joi.number().min(0).label("price"),
     countInStock: Joi.number().min(0).label("countInStock"),
@@ -66,6 +70,42 @@ const updateProductSchemaBodyValidation = (body) => {
   });
   return schema.validate(body);
 };
+const createOrderSchemaBodyValidation = (body) => {
+  const schema = Joi.object({
+    paymentMethod: Joi.string().label("paymentMethod").required(),
+    itemsPrice: Joi.number().min(0).label("itemsPrice").required(),
+    shippingPrice: Joi.number().min(0).label("shippingPrice").required(),
+    totalPrice: Joi.number().min(0).label("totalPrice").required(),
+    fullName: Joi.string().label("fullName").required(),
+    address: Joi.string().label("address").required(),
+    city: Joi.string().label("city").required(),
+    phone: Joi.string()
+      .regex(/^\d{10}$/)
+      .label("phone")
+      .required(),
+  });
+  return schema.validate(body);
+};
+const changePasswordSchemaBodyValidation = (body) => {
+  const schema = Joi.object({
+    email: Joi.string().email().required().label("email"),
+    oldPassword: passwordComplexity().required().label("oldPassword"),
+    newPassword: passwordComplexity().required().label("newPassword"),
+  });
+  return schema.validate(body);
+};
+const forgotPassworSchemaBodyValidation = (body) => {
+  const schema = Joi.object({
+    email: Joi.string().email().required().label("email"),
+  });
+  return schema.validate(body);
+};
+const resetPasswordSchemaBodyValidation = (body) => {
+  const schema = Joi.object({
+    password: passwordComplexity().required().label("password"),
+  });
+  return schema.validate(body);
+};
 module.exports = {
   signUpBodyValidation,
   logInBodyValidation,
@@ -73,4 +113,8 @@ module.exports = {
   updateProfileBodyValidation,
   createProductSchemaBodyValidation,
   updateProductSchemaBodyValidation,
+  createOrderSchemaBodyValidation,
+  changePasswordSchemaBodyValidation,
+  forgotPassworSchemaBodyValidation,
+  resetPasswordSchemaBodyValidation,
 };

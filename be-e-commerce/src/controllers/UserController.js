@@ -1,7 +1,81 @@
 const UserService = require("../services/UserService");
 const JwtService = require("../services/JwtService");
 const validationSchema = require("../utils/validationSchema");
+const User = require("../models/UserModel");
 
+const resetPasswordUser = async (req, res) => {
+  try {
+    const { error } = validationSchema.resetPasswordSchemaBodyValidation(
+      req.body
+    );
+    if (error)
+      return res
+        .status(401)
+        .json({ error: true, message: error.details[0].message });
+    //chua bat loi
+    let data = {
+      userId: req.params.userId,
+      token: req.params.token,
+      password: req.body.password,
+    };
+
+    const response = await UserService.resetPasswordUser(data);
+
+    if (response.status == "OK") {
+      return res.status(200).json(response);
+    } else {
+      return res.status(401).json(response);
+    }
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
+const forgotPasswordUser = async (req, res) => {
+  try {
+    const { error } = validationSchema.forgotPassworSchemaBodyValidation(
+      req.body
+    );
+    if (error)
+      return res
+        .status(401)
+        .json({ error: true, message: error.details[0].message });
+
+    const response = await UserService.forgotPasswordUser(req.body);
+    if (response.status == "OK") {
+      return res.status(200).json(response);
+    } else {
+      return res.status(401).json(response);
+    }
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
+const changePasswordUser = async (req, res) => {
+  try {
+    const { error } = validationSchema.changePasswordSchemaBodyValidation(
+      req.body
+    );
+    if (error)
+      return res
+        .status(401)
+        .json({ error: true, message: error.details[0].message });
+
+    const response = await UserService.changePasswordUser(req.body);
+    if (response.status == "OK") {
+      return res.status(200).json(response);
+    } else {
+      return res.status(401).json(response);
+    }
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
 //ok
 const createUser = async (req, res) => {
   try {
@@ -12,12 +86,11 @@ const createUser = async (req, res) => {
         .json({ error: true, message: error.details[0].message });
 
     const response = await UserService.createUser(req.body);
-    return response.status == "OK"
-      ? res.status(200).json(response)
-      : res.status(401).json({
-          status: "INFO",
-          message: "The email is already",
-        });
+    if (response.status == "OK") {
+      return res.status(200).json(response);
+    } else {
+      return res.status(401).json(response);
+    }
   } catch (e) {
     return res.status(404).json({
       message: e,
@@ -40,7 +113,11 @@ const loginUser = async (req, res) => {
       sameSite: "strict",
       path: "/",
     });
-    return res.status(200).json({ ...newReponse });
+    if (response.status == "OK") {
+      return res.status(200).json({ ...newReponse });
+    } else {
+      return res.status(401).json(response);
+    }
   } catch (e) {
     return res.status(401).json({
       message: e,
@@ -66,8 +143,11 @@ const updateUser = async (req, res) => {
         .json({ error: true, message: error.details[0].message });
 
     const response = await UserService.updateUser(userId, data);
-
-    return res.status(200).json(response);
+    if (response.status == "OK") {
+      return res.status(200).json(response);
+    } else {
+      return res.status(401).json(response);
+    }
   } catch (e) {
     return res.status(404).json({
       message: e,
@@ -85,7 +165,11 @@ const deleteUser = async (req, res) => {
       });
     }
     const response = await UserService.deleteUser(userId);
-    return res.status(200).json(response);
+    if (response.status == "OK") {
+      return res.status(200).json(response);
+    } else {
+      return res.status(401).json(response);
+    }
   } catch (e) {
     return res.status(404).json({
       message: e,
@@ -103,7 +187,11 @@ const deleteMany = async (req, res) => {
       });
     }
     const response = await UserService.deleteManyUser(ids);
-    return res.status(200).json(response);
+    if (response.status == "OK") {
+      return res.status(200).json(response);
+    } else {
+      return res.status(401).json(response);
+    }
   } catch (e) {
     return res.status(404).json({
       message: e,
@@ -114,13 +202,18 @@ const deleteMany = async (req, res) => {
 const getAllUser = async (req, res) => {
   try {
     const response = await UserService.getAllUser();
-    return res.status(200).json(response);
+    if (response.status == "OK") {
+      return res.status(200).json(response);
+    } else {
+      return res.status(401).json(response);
+    }
   } catch (e) {
     return res.status(404).json({
       message: e,
     });
   }
 };
+
 //ok
 const getDetailsUser = async (req, res) => {
   try {
@@ -132,7 +225,11 @@ const getDetailsUser = async (req, res) => {
       });
     }
     const response = await UserService.getDetailsUser(userId);
-    return res.status(200).json(response);
+    if (response.status == "OK") {
+      return res.status(200).json(response);
+    } else {
+      return res.status(401).json(response);
+    }
   } catch (e) {
     return res.status(404).json({
       message: e,
@@ -159,7 +256,12 @@ const refreshToken = async (req, res) => {
       sameSite: "strict",
       path: "/",
     });
-    return res.status(200).json(response);
+
+    if (response.status == "OK") {
+      return res.status(200).json(response);
+    } else {
+      return res.status(401).json(response);
+    }
   } catch (e) {
     return res.status(404).json({
       message: e,
@@ -197,4 +299,7 @@ module.exports = {
   refreshToken,
   logoutUser,
   deleteMany,
+  changePasswordUser,
+  forgotPasswordUser,
+  resetPasswordUser,
 };

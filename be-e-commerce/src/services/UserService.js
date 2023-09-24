@@ -1,7 +1,14 @@
 const User = require("../models/UserModel");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
+const sendEmail = require("../utils/SendEmail.js");
+
 const RefreshToken = require("../models/RefreshToken");
 const { genneralAccessToken, genneralRefreshToken } = require("./JwtService");
+const { resolve } = require("path");
+const { rejects } = require("assert");
+const AccessToken = require("../models/AccessToken");
+
 //ok
 const createUser = (newUser) => {
   return new Promise(async (resolve, reject) => {
@@ -68,6 +75,7 @@ const loginUser = (userLogin) => {
         id: checkUser.id,
         isAdmin: checkUser.isAdmin,
       });
+
       let id = checkUser._id;
       await RefreshToken.find({ userId: id }).deleteMany().exec();
 
@@ -188,7 +196,131 @@ const getDetailsUser = (id) => {
     }
   });
 };
+const changePasswordUser = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { email, oldPassword, newPassword } = data;
 
+      const checkUser = await User.findOne({
+        email: email,
+      });
+      if (checkUser === null) {
+        resolve({
+          status: "ERR",
+          message: "The user is not defined",
+        });
+      }
+
+      const comparePassword = bcrypt.compareSync(
+        oldPassword,
+        checkUser.password
+      );
+
+      if (!comparePassword) {
+        resolve({
+          status: "ERR",
+          message: "The password or user is incorre6ct",
+        });
+      } else {
+        const salt = await bcrypt.genSalt(Number(process.env.SALT));
+        const password = await bcrypt.hash(newPassword, salt);
+
+        console.log(checkUser.password);
+        checkUser.password = password;
+        console.log(checkUser.password);
+
+        const rs = await User.updateOne({ email: checkUser.email }, checkUser);
+        let checkUser1 = await User.findOne({
+          email: email,
+        });
+        console.log(checkUser1.password);
+
+        if (rs) {
+          resolve({
+            status: "OK",
+            message: "UPDATE SUCCESS",
+            data: rs,
+          });
+        }
+      }
+    } catch (error) {
+      reject(e);
+    }
+  });
+};
+const forgotPasswordUser = (data) => {
+  return new Promise(async (resolve, rejects) => {
+    try {
+      const user = await User.findOne({ email: data.email });
+      if (!user) {
+        resolve({
+          status: "ERR",
+          message: "user with given email doesn't exist",
+        });
+      }
+
+      let token = await AccessToken.findOne({ userId: user._id });
+      if (!token) {
+        const access_token = await genneralAccessToken({
+          id: user.id,
+          isAdmin: user.isAdmin,
+        });
+        token = await new AccessToken({
+          userId: user._id,
+          token: access_token,
+        }).save();
+      }
+
+      const link = `${process.env.BASE_URL}/api/user/password-reset/${user._id}/${token.token}`;
+      await sendEmail.sendResetPasswordEmail(
+        user.email,
+        "Password reset",
+        link
+      );
+      resolve({
+        status: "OK",
+        message: "password reset link sent to your email account",
+      });
+    } catch (error) {
+      rejects(error);
+    }
+  });
+};
+const resetPasswordUser = async (data) => {
+  return new Promise(async (resolve, rejects) => {
+    try {
+      const user = await User.findById(data.userId);
+      if (!user)
+        return resolve({
+          status: "ERR",
+          message: "Invalid link or expired",
+        });
+
+      const token = await AccessToken.findOne({
+        userId: user._id,
+        token: data.token,
+      });
+      if (!token)
+        return resolve({
+          status: "ERR",
+          message: "Invalid link or expired",
+        });
+
+      const salt = await bcrypt.genSalt(Number(process.env.SALT));
+      const hash = await bcrypt.hash(data.password, salt);
+      user.password = hash;
+
+      await user.save();
+      await token.delete();
+      return resolve({
+        status: "OK",
+        message: "password reset sucessfully.",
+      });
+    } catch (error) {
+      rejects(error);
+    }
+  });
+};
 module.exports = {
   createUser,
   loginUser,
@@ -197,4 +329,7 @@ module.exports = {
   getAllUser,
   getDetailsUser,
   deleteManyUser,
+  changePasswordUser,
+  forgotPasswordUser,
+  resetPasswordUser,
 };
