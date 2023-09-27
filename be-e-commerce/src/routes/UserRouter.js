@@ -5,6 +5,7 @@ const {
   authMiddleWare,
   authUserMiddleWare,
 } = require("../middleware/authMiddleware");
+router.get("/get-by-rating", userController.forgotPasswordUser);
 
 router.post("/forgot-password", userController.forgotPasswordUser);
 router.post("/password-reset/:userId/:token", userController.resetPasswordUser);

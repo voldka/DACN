@@ -8,13 +8,13 @@ const { upload } = require("../controllers/ProductController");
 router.post(
   "/create",
   authMiddleWare,
-  upload.single("image"),
+  // upload.single("image"),
   ProductController.createProduct
 );
 router.put(
   "/update/:id",
   authMiddleWare,
-  upload.single("image"),
+  // upload.single("image"),
   ProductController.updateProduct
 );
 router.delete("/delete/:id", authMiddleWare, ProductController.deleteProduct);

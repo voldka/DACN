@@ -3,16 +3,19 @@ const mongoose = require("mongoose");
 const productSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
-    image: {
-      data: Buffer,
-      contentType: String,
-    },
+    image: { type: [String], required: true },
+    // image: {
+    //   data: Buffer,
+    //   contentType: String,
+    // },
+    // should string array for save list path image
     type: { type: String, required: true },
     price: { type: Number, required: true },
     countInStock: { type: Number, required: true },
-    rating: { type: Number, required: true },
-    description: { type: String },
-    discount: { type: Number },
+
+    rating: { type: Number },
+    description: { type: String, default: "chưa có mô tả" },
+    discount: { type: Number, default: 0 },
     selled: { type: Number, default: 0 },
   },
   {

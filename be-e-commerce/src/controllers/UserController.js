@@ -76,7 +76,7 @@ const changePasswordUser = async (req, res) => {
     });
   }
 };
-//ok
+
 const createUser = async (req, res) => {
   try {
     const { error } = validationSchema.signUpBodyValidation(req.body);
@@ -97,7 +97,7 @@ const createUser = async (req, res) => {
     });
   }
 };
-//ok
+
 const loginUser = async (req, res) => {
   try {
     const { error } = validationSchema.logInBodyValidation(req.body);
@@ -124,7 +124,7 @@ const loginUser = async (req, res) => {
     });
   }
 };
-//ok
+
 const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -214,7 +214,6 @@ const getAllUser = async (req, res) => {
   }
 };
 
-//ok
 const getDetailsUser = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -236,7 +235,7 @@ const getDetailsUser = async (req, res) => {
     });
   }
 };
-//ok
+
 const refreshToken = async (req, res) => {
   try {
     let refreshToken = req.cookies.refresh_token;
@@ -268,7 +267,7 @@ const refreshToken = async (req, res) => {
     });
   }
 };
-//ok
+
 const logoutUser = async (req, res) => {
   try {
     if (req.cookies && req.cookies.refresh_token) {

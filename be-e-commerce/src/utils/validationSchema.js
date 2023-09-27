@@ -39,14 +39,16 @@ const updateProfileBodyValidation = (body) => {
 const createProductSchemaBodyValidation = (body) => {
   const schema = Joi.object({
     name: Joi.string().required().label("name"),
-    image: Joi.binary()
-      .encoding("base64")
-      .valid("jpg", "jpeg", "png", "gif", "bmp"),
+    image: Joi.array().items(Joi.string()).min(1).required(),
+    // image: Joi.string().required().label("image"),
+    // image: Joi.binary()
+    //   .encoding("base64")
+    //   .valid("jpg", "jpeg", "png", "gif", "bmp"),
     type: Joi.string().required().label("type"),
     price: Joi.number().min(0).required().label("price"),
     countInStock: Joi.number().min(0).required().label("countInStock"),
-    rating: Joi.number().min(0).max(5).required().label("rating"),
 
+    rating: Joi.number().min(0).max(5).label("rating"),
     description: Joi.string().label("description"),
     discount: Joi.number().min(0).max(99).label("discount"),
     selled: Joi.number().min(0).label("selled"),
@@ -56,9 +58,11 @@ const createProductSchemaBodyValidation = (body) => {
 const updateProductSchemaBodyValidation = (body) => {
   const schema = Joi.object({
     name: Joi.string().label("name"),
-    image: Joi.binary()
-      .encoding("base64")
-      .valid("jpg", "jpeg", "png", "gif", "bmp"),
+    image: Joi.array().items(Joi.string()).min(1).required(),
+    // image: Joi.string().required().label("image"),
+    // image: Joi.binary()
+    //   .encoding("base64")
+    //   .valid("jpg", "jpeg", "png", "gif", "bmp"),
     type: Joi.string().label("type"),
     price: Joi.number().min(0).label("price"),
     countInStock: Joi.number().min(0).label("countInStock"),
@@ -72,6 +76,8 @@ const updateProductSchemaBodyValidation = (body) => {
 };
 const createOrderSchemaBodyValidation = (body) => {
   const schema = Joi.object({
+    orderItems: Joi.array().items(Joi.object()).required().label("orderItems"),
+    user: Joi.string().label("user"),
     paymentMethod: Joi.string().label("paymentMethod").required(),
     itemsPrice: Joi.number().min(0).label("itemsPrice").required(),
     shippingPrice: Joi.number().min(0).label("shippingPrice").required(),
@@ -83,6 +89,9 @@ const createOrderSchemaBodyValidation = (body) => {
       .regex(/^\d{10}$/)
       .label("phone")
       .required(),
+    email: Joi.string().email().required().label("email"),
+    isPaid: Joi.boolean().label("isPaid"),
+    paidAt: Joi.date().label("paidAt"),
   });
   return schema.validate(body);
 };

@@ -312,6 +312,7 @@ const resetPasswordUser = async (data) => {
 
       await user.save();
       await token.delete();
+
       return resolve({
         status: "OK",
         message: "password reset sucessfully.",

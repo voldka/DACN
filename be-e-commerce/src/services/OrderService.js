@@ -1,6 +1,6 @@
 const Order = require("../models/OrderProduct");
 const Product = require("../models/ProductModel");
-const EmailService = require("../services/EmailService");
+const SendEmail = require("../utils/SendEmail");
 
 const createOrder = (newOrder) => {
   return new Promise(async (resolve, reject) => {
@@ -19,23 +19,16 @@ const createOrder = (newOrder) => {
       paidAt,
       email,
     } = newOrder;
+
     try {
       //tim san pham khong du
       const promises = orderItems.map(async (order) => {
-        const productData = await Product.findOneAndUpdate(
+        const productData = await Product.findOne(
           //tim san pham va so luong san phan pham
           {
             _id: order.product,
             countInStock: { $gte: order.amount },
-          },
-          //tang so luong ban dc len va giam so luong trong kho
-          {
-            $inc: {
-              countInStock: -order.amount,
-              selled: +order.amount,
-            },
-          },
-          { new: true }
+          }
         );
         if (productData) {
           return {
@@ -63,6 +56,27 @@ const createOrder = (newOrder) => {
           message: `San pham voi id: ${arrId.join(",")} khong du hang`,
         });
       } else {
+        const promisesupdate = orderItems.map(async (order) => {
+          const productUpdateData = await Product.findOneAndUpdate(
+            {
+              _id: order.product,
+              countInStock: { $gte: order.amount },
+            },
+            {
+              $inc: {
+                countInStock: -order.amount,
+                selled: +order.amount,
+              },
+            },
+            { new: true }
+          );
+          return {
+            status: "OK",
+            message: "SUCCESS",
+          };
+        });
+        const resultsUpdate = await Promise.all(promisesupdate);
+
         const createdOrder = await Order.create({
           orderItems,
           shippingAddress: {
@@ -80,7 +94,7 @@ const createOrder = (newOrder) => {
           paidAt,
         });
         if (createdOrder) {
-          await EmailService.sendEmailCreateOrder(email, orderItems);
+          await SendEmail.sendEmailCreateOrder(email, orderItems);
           resolve({
             status: "OK",
             message: "success",

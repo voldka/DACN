@@ -27,15 +27,15 @@ const createProduct = async (req, res) => {
         .status(401)
         .json({ error: true, message: error.details[0].message });
 
-    const obj = {
-      ...req.body, // Copy all properties from req.body
-      image: {
-        data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
-        contentType: "image/png",
-      },
-    };
+    // const obj = {
+    //   ...req.body, // Copy all properties from req.body
+    //   image: {
+    //     data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
+    //     contentType: "image/png",
+    //   },
+    // };
 
-    const response = await ProductService.createProduct(obj);
+    const response = await ProductService.createProduct(req.body);
     return res.status(200).json(response);
   } catch (e) {
     return res.status(404).json({
@@ -54,7 +54,7 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    const { error } = validationSchema.updateProductSchemaBodyValidation(
+    const { error } = validationSchema.createProductSchemaBodyValidation(
       req.body
     );
     if (error)
@@ -62,15 +62,15 @@ const updateProduct = async (req, res) => {
         .status(401)
         .json({ error: true, message: error.details[0].message });
 
-    const obj = {
-      ...req.body, // Copy all properties from req.body
-      image: {
-        data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
-        contentType: "image/png",
-      },
-    };
-    console.log(obj.image);
-    const response = await ProductService.updateProduct(productId, obj);
+    // const obj = {
+    //   ...req.body, // Copy all properties from req.body
+    //   image: {
+    //     data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
+    //     contentType: "image/png",
+    //   },
+    // };
+
+    const response = await ProductService.updateProduct(productId, req.body);
     return res.status(200).json(response);
   } catch (e) {
     return res.status(404).json({

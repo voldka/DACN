@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
 dotenv.config();
-
+var inlineBase64 = require("nodemailer-plugin-inline-base64");
 const sendEmailService = async (email) => {
   let transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -39,6 +39,46 @@ const sendEmailService = async (email) => {
   });
   return info;
 };
+const sendEmailCreateOrder = async (email, orderItems) => {
+  try {
+    let transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      //   service: process.env.SERVICE,
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.MAIL_ACCOUNT,
+        pass: process.env.MAIL_PASSWORD,
+      },
+    });
+
+    transporter.use("compile", inlineBase64({ cidPrefix: "somePrefix_" }));
+
+    let listItem = "";
+    const attachImage = [];
+
+    orderItems.forEach((order) => {
+      listItem += `<div>
+      <div>
+        Sản phẩm <b>${order.name}</b> với số lượng: <b>${order.amount}</b> và giá là: <b>${order.price} VND</b></div>
+      </div>`;
+      // attachImage.push({ path: order.image });
+    });
+
+    // send mail with defined transport object
+    let info = await transporter.sendMail({
+      from: process.env.MAIL_ACCOUNT, // sender address
+      to: email, // list of receivers
+      subject: "Bạn đã đặt hàng tại shop LT Handmade", // Subject line
+      text: "cảm ơn<3", // plain text body
+      html: `<div><b>Bạn đã đặt hàng thành công tại shop LT Handmade</b></div> ${listItem}`,
+    });
+    console.log("email sent sucessfully");
+    return info;
+  } catch (error) {
+    console.log(error, "email not sent " + error);
+  }
+};
 const sendResetPasswordEmail = async (email, subject, text) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -54,15 +94,20 @@ const sendResetPasswordEmail = async (email, subject, text) => {
       //   ciphers: "SSLv3",
       // },
     });
-    await transporter.sendMail({
+    let info = await transporter.sendMail({
       from: process.env.MAIL_ACCOUNT,
       to: email,
       subject: subject,
       text: text,
     });
     console.log("email sent sucessfully");
+    return info;
   } catch (error) {
     console.log(error, "email not sent");
   }
 };
-module.exports = { sendResetPasswordEmail, sendEmailService };
+module.exports = {
+  sendResetPasswordEmail,
+  sendEmailCreateOrder,
+  sendEmailService,
+};
