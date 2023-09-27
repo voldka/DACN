@@ -46,7 +46,7 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
-    const productId = req.params.id;
+    const productId = req.params.productId;
     if (!productId) {
       return res.status(200).json({
         status: "ERR",
@@ -81,7 +81,7 @@ const updateProduct = async (req, res) => {
 
 const getDetailsProduct = async (req, res) => {
   try {
-    const productId = req.params.id;
+    const productId = req.params.productId;
     if (!productId) {
       return res.status(200).json({
         status: "ERR",
@@ -99,7 +99,7 @@ const getDetailsProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   try {
-    const productId = req.params.id;
+    const productId = req.params.productId;
     if (!productId) {
       return res.status(200).json({
         status: "ERR",

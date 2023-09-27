@@ -23,7 +23,7 @@ const createOrder = async (req, res) => {
 
 const getAllOrderDetails = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     if (!userId) {
       return res.status(200).json({
         status: "ERR",
@@ -43,11 +43,11 @@ const getAllOrderDetails = async (req, res) => {
 
 const getDetailsOrder = async (req, res) => {
   try {
-    const orderId = req.params.id;
+    const orderId = req.params.orderId;
     if (!orderId) {
       return res.status(200).json({
         status: "ERR",
-        message: "The userId is required",
+        message: "The orderId is required",
       });
     }
 

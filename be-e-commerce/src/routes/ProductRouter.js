@@ -12,15 +12,19 @@ router.post(
   ProductController.createProduct
 );
 router.put(
-  "/update/:id",
+  "/update/:productId",
   authMiddleWare,
   // upload.single("image"),
   ProductController.updateProduct
 );
-router.delete("/delete/:id", authMiddleWare, ProductController.deleteProduct);
+router.delete(
+  "/delete/:productId",
+  authMiddleWare,
+  ProductController.deleteProduct
+);
 router.post("/delete-many", authMiddleWare, ProductController.deleteMany);
 
-router.get("/get-details/:id", ProductController.getDetailsProduct);
+router.get("/get-details/:productId", ProductController.getDetailsProduct);
 router.get("/get-all", ProductController.getAllProduct);
 router.get("/get-all-type", ProductController.getAllType);
 

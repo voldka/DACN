@@ -127,7 +127,7 @@ const loginUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     if (!userId) {
       return res.status(200).json({
         status: "ERR",
@@ -157,7 +157,7 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     if (!userId) {
       return res.status(200).json({
         status: "ERR",
@@ -216,7 +216,7 @@ const getAllUser = async (req, res) => {
 
 const getDetailsUser = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     if (!userId) {
       return res.status(200).json({
         status: "ERR",

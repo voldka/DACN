@@ -9,13 +9,13 @@ const {
 
 router.post("/create", OrderController.createOrder);
 router.get(
-  "/get-all-order/:id",
+  "/get-all-order/:userId",
   authUserMiddleWare,
   OrderController.getAllOrderDetails
 );
-router.get("/get-details-order/:id", OrderController.getDetailsOrder);
+router.get("/get-details-order/:orderId", OrderController.getDetailsOrder);
 router.delete(
-  "/cancel-order/:id",
+  "/cancel-order/:userId",
   authUserMiddleWare,
   OrderController.cancelOrderDetails
 );

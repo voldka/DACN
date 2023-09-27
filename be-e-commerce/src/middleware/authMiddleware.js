@@ -51,7 +51,7 @@ const authUserMiddleWare = async (req, res, next) => {
       .status(403)
       .json({ error: true, message: "Access Denied: No token provided" });
   try {
-    let userId = req.params.id;
+    let userId = req.params.userId;
 
     jwt.verify(
       token,
