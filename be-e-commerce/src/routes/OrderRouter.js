@@ -13,7 +13,11 @@ router.get(
   authUserMiddleWare,
   OrderController.getAllOrderDetails
 );
-router.get("/get-details-order/:orderId", OrderController.getDetailsOrder);
+router.get(
+  "/get-details-order/:orderId/:userId",
+  authUserMiddleWare,
+  OrderController.getDetailsOrder
+);
 router.delete(
   "/cancel-order/:userId",
   authUserMiddleWare,

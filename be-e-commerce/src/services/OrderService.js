@@ -108,19 +108,22 @@ const createOrder = (newOrder) => {
   });
 };
 
-// const deleteManyProduct = (ids) => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             await Product.deleteMany({ _id: ids })
-//             resolve({
-//                 status: 'OK',
-//                 message: 'Delete product success',
-//             })
-//         } catch (e) {
-//             reject(e)
-//         }
-//     })
-// }
+//did not tested
+const deleteManyProduct = (ids) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await Product.deleteMany({ _id: ids });
+      resolve({
+        status: "OK",
+        message: "Delete product success",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+//all order of user
 
 const getAllOrderDetails = (id) => {
   return new Promise(async (resolve, reject) => {
@@ -228,6 +231,7 @@ const cancelOrderDetails = (id, data) => {
   });
 };
 
+//all order for admin to manage
 const getAllOrder = () => {
   return new Promise(async (resolve, reject) => {
     try {

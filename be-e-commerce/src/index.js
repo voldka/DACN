@@ -9,6 +9,7 @@ const UserRouter = require("./routes/UserRouter");
 const PaymentRouter = require("./routes/PaymentRouter");
 const OrderRouter = require("./routes/OrderRouter");
 const ProductRouter = require("./routes/ProductRouter");
+const CarouselRouter = require("./routes/CarouselRouter");
 const multer = require("multer");
 const mongo = require("./mongo");
 dotenv.config();
@@ -26,6 +27,7 @@ app.use("/api/user", UserRouter);
 app.use("/api/product", ProductRouter);
 app.use("/api/order", OrderRouter);
 app.use("/api/payment", PaymentRouter);
+app.use("/api/carousel", CarouselRouter);
 
 mongo.connect();
 
