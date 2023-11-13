@@ -5,7 +5,21 @@ const {
   authMiddleWare,
   authUserMiddleWare,
 } = require("../middleware/authMiddleware");
+const path = require("path");
+const multer = require('multer');
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.resolve(__dirname, '../', '../', 'public', 'uploads', 'users'));
+  },
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      req.params?.userId+ "-" + file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+const upload = multer({ storage: storage ,limits: 4*1024*1024});
 router.get("/get-by-rating", userController.forgotPasswordUser);
 router.post("/forgot-password", userController.forgotPasswordUser);
 router.post("/password-reset/:userId/:token", userController.resetPasswordUser);
@@ -16,6 +30,7 @@ router.post("/log-out", userController.logoutUser);
 router.put(
   "/update-user/:userId",
   authUserMiddleWare,
+  upload.single("avatar"),
   userController.updateUser
 );
 router.get(
@@ -25,7 +40,7 @@ router.get(
 );
 router.post("/refresh-token", userController.refreshToken);
 
-router.get("/getAll", authMiddleWare, userController.getAllUser);
+router.get("/getAll", userController.getAllUser);
 router.delete(
   "/delete-user/:userId",
   authMiddleWare,

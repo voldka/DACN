@@ -3,12 +3,16 @@ const router = express.Router();
 const ProductController = require("../controllers/ProductController");
 
 const { authMiddleWare } = require("../middleware/authMiddleware");
-const { upload } = require("../controllers/ProductController");
+
+
+
+// put the HTML file containing your form in a directory named "public" (relative to where this script is located)
+// app.get("/", express.static(path.join(__dirname, "./public")));
+
 
 router.post(
   "/create",
   authMiddleWare,
-  // upload.single("image"),
   ProductController.createProduct
 );
 router.put(

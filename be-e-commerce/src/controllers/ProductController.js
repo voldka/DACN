@@ -1,24 +1,11 @@
 const ProductService = require("../services/ProductService");
 const validationSchema = require("../utils/validationSchema");
-const multer = require("multer");
-var fs = require("fs");
-var path = require("path");
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
-  },
-});
-const upload = multer({ storage: storage });
+
 
 const createProduct = async (req, res) => {
   try {
+    //sai logic b1 tao object = req, b2 validation,..
     const { error } = validationSchema.createProductSchemaBodyValidation(
       req.body
     );
@@ -27,12 +14,14 @@ const createProduct = async (req, res) => {
         .status(401)
         .json({ error: true, message: error.details[0].message });
 
+    // const imagePath = req.file.path;
     // const obj = {
     //   ...req.body, // Copy all properties from req.body
-    //   image: {
-    //     data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
-    //     contentType: "image/png",
-    //   },
+    //   image: imagePath,
+    //   //  {
+    //   //   // data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
+    //   //   // contentType: "image/png",
+    //   // },
     // };
 
     const response = await ProductService.createProduct(req.body);
@@ -169,5 +158,4 @@ module.exports = {
   getAllProduct,
   deleteMany,
   getAllType,
-  upload,
 };

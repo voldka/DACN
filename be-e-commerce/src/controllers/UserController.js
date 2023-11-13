@@ -134,8 +134,17 @@ const updateUser = async (req, res) => {
         message: "The userId is required",
       });
     }
+    
+    const imagePath = process.env.BASE_URL + '/uploads/users/' + req.file.filename;
+    const data = {
+      ...req.body, // Copy all properties from req.body
+      avatar: imagePath,
+      //  {
+      //   // data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
+      //   // contentType: "image/png",
+      // },
+    };
 
-    const data = req.body;
     const { error } = validationSchema.updateProfileBodyValidation(data);
     if (error)
       return res

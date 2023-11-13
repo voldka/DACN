@@ -1,21 +1,6 @@
 const CarouselService = require("../services/CarouselService");
 const validationSchema = require("../utils/validationSchema");
-const multer = require("multer");
-var fs = require("fs");
-var path = require("path");
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
-  },
-});
-const upload = multer({ storage: storage });
 
 const createCarousel = async (req, res) => {
   try {
