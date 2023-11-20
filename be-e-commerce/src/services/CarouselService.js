@@ -14,6 +14,17 @@ const createCarousel = (newCarousel) => {
         resolve({
           status: "ERR",
           message: "The name of Carousel is already",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+            orderData: null,
+            carouselData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
       const newCarousel = await CarouselModel.create({
@@ -25,7 +36,17 @@ const createCarousel = (newCarousel) => {
         resolve({
           status: "OK",
           message: "SUCCESS",
-          data: newCarousel,
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+            orderData: null,
+            carouselData: newCarousel,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
     } catch (e) {
@@ -44,6 +65,17 @@ const updateCarousel = (id, data) => {
         resolve({
           status: "ERR",
           message: "The Carousel is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+            orderData: null,
+            carouselData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
 
@@ -53,7 +85,17 @@ const updateCarousel = (id, data) => {
       resolve({
         status: "OK",
         message: "SUCCESS",
-        data: updatedCarousel,
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: null,
+          orderData: null,
+          carouselData: updatedCarousel,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -71,6 +113,17 @@ const deleteCarousel = (id) => {
         resolve({
           status: "ERR",
           message: "The Carousel is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+            orderData: null,
+            carouselData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
 
@@ -78,6 +131,17 @@ const deleteCarousel = (id) => {
       resolve({
         status: "OK",
         message: "Delete Carousel success",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: null,
+          orderData: null,
+          carouselData: null,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -92,6 +156,17 @@ const deleteManyCarousel = (ids) => {
       resolve({
         status: "OK",
         message: "Delete Carousel success",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: null,
+          orderData: null,
+          carouselData: null,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -109,13 +184,33 @@ const getDetailsCarousel = (id) => {
         resolve({
           status: "ERR",
           message: "The Carousel is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+            orderData: null,
+            carouselData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
-
       resolve({
         status: "OK",
-        message: "SUCESS",
-        data: Carousel,
+        message: "SUCCESS",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: null,
+          orderData: null,
+          carouselData: Carousel,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -136,14 +231,21 @@ const getAllCarousel = (limit, page, sort, filter) => {
           .limit(limit)
           .skip(page * limit)
           .sort({ createdAt: -1, updatedAt: -1 });
-        resolve({
-          status: "OK",
-          message: "Success",
-          data: allObjectFilter,
-          total: totalCarousel,
-          pageCurrent: Number(page + 1),
-          totalPage: Math.ceil(totalCarousel / limit),
-        });
+          resolve({
+            status: "OK",
+            message: "SUCCESS",
+            data: {
+              total: totalCarousel,
+              pageCurrent: Number(page + 1),
+              totalPage: Math.ceil(totalCarousel / limit),
+              userData: null,
+              productData: null,
+              orderData: null,
+              carouselData: allObjectFilter,
+            },
+            access_token: null,
+            refresh_token: null,
+          });
       }
       if (sort) {
         const objectSort = {};
@@ -153,14 +255,21 @@ const getAllCarousel = (limit, page, sort, filter) => {
           .skip(page * limit)
           .sort(objectSort)
           .sort({ createdAt: -1, updatedAt: -1 });
-        resolve({
-          status: "OK",
-          message: "Success",
-          data: allCarouselSort,
-          total: totalCarousel,
-          pageCurrent: Number(page + 1),
-          totalPage: Math.ceil(totalCarousel / limit),
-        });
+          resolve({
+            status: "OK",
+            message: "SUCCESS",
+            data: {
+              total: totalCarousel,
+              pageCurrent: Number(page + 1),
+              totalPage: Math.ceil(totalCarousel / limit),
+              userData: null,
+              productData: null,
+              orderData: null,
+              carouselData: allCarouselSort,
+            },
+            access_token: null,
+            refresh_token: null,
+          });
       }
       if (!limit) {
         allCarousel = await CarouselModel.find().sort({
@@ -175,11 +284,18 @@ const getAllCarousel = (limit, page, sort, filter) => {
       }
       resolve({
         status: "OK",
-        message: "Success",
-        data: allCarousel,
-        total: totalCarousel,
-        pageCurrent: Number(page + 1),
-        totalPage: Math.ceil(totalCarousel / limit),
+        message: "SUCCESS",
+        data: {
+          total: totalCarousel,
+          pageCurrent: Number(page + 1),
+          totalPage: Math.ceil(totalCarousel / limit),
+          userData: null,
+          productData: null,
+          orderData: null,
+          carouselData: allCarousel,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);

@@ -11,7 +11,7 @@ const orderSchema = new mongoose.Schema(
         discount: { type: Number },
         product: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Product",
+          ref: "Products",
           required: true,
         },
       },
@@ -26,7 +26,7 @@ const orderSchema = new mongoose.Schema(
     itemsPrice: { type: Number, required: true },
     shippingPrice: { type: Number, required: true },
     totalPrice: { type: Number, required: true },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true },
     isPaid: { type: Boolean, default: false },
     paidAt: { type: Date },
     isDelivered: { type: Boolean, default: false },

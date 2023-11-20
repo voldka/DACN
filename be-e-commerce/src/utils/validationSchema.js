@@ -119,7 +119,7 @@ const createCarouselSchemaBodyValidation = (body) => {
   const schema = Joi.object({
     name: Joi.string().required().label("name"),
     description: Joi.string().label("description"),
-    link: Joi.string().required().label("name"),
+    image: Joi.string().required().label("name"),
   });
   return schema.validate(body);
 };

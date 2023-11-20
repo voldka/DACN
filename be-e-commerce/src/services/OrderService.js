@@ -52,8 +52,18 @@ const createOrder = (newOrder) => {
           arrId.push(item.id);
         });
         resolve({
-          status: "ERR",
+          status: "OK",
           message: `San pham voi id: ${arrId.join(",")} khong du hang`,
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+            orderData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       } else {
         const promisesupdate = orderItems.map(async (order) => {
@@ -98,6 +108,16 @@ const createOrder = (newOrder) => {
           resolve({
             status: "OK",
             message: "success",
+            data: {
+              total: null,
+              pageCurrent: null,
+              totalPage: null,
+              userData: null,
+              productData: null,
+              orderData: null,
+            },
+            access_token: null,
+            refresh_token: null,
           });
         }
       }
@@ -116,6 +136,16 @@ const deleteManyProduct = (ids) => {
       resolve({
         status: "OK",
         message: "Delete product success",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: null,
+          orderData: null,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -135,14 +165,33 @@ const getAllOrderDetails = (id) => {
         resolve({
           status: "ERR",
           message: "The order is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+            orderData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
-
       resolve({
         status: "OK",
-        message: "SUCESSS",
-        data: order,
+        message: "SUCCESSS",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: null,
+          orderData: order,
+        },
+        access_token: null,
+        refresh_token: null,
       });
+
     } catch (e) {
       // console.log('e', e)
       reject(e);
@@ -160,13 +209,31 @@ const getOrderDetails = (id) => {
         resolve({
           status: "ERR",
           message: "The order is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+            orderData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
-
       resolve({
         status: "OK",
-        message: "SUCESSS",
-        data: order,
+        message: "SUCCESSS",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: null,
+          orderData: order,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       // console.log('e', e)
@@ -201,6 +268,16 @@ const cancelOrderDetails = (id, data) => {
             resolve({
               status: "ERR",
               message: "The order is not defined",
+              data: {
+                total: null,
+                pageCurrent: null,
+                totalPage: null,
+                userData: null,
+                productData: null,
+                orderData: null,
+              },
+              access_token: null,
+              refresh_token: null,
             });
           }
         } else {
@@ -218,12 +295,31 @@ const cancelOrderDetails = (id, data) => {
         resolve({
           status: "ERR",
           message: `San pham voi id: ${newData} khong ton tai`,
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+            orderData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
       resolve({
-        status: "OK",
-        message: "success",
-        data: order,
+        status: "ERR",
+        message: `San pham voi id: ${newData} khong ton tai`,
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: null,
+          orderData: order,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -241,8 +337,17 @@ const getAllOrder = () => {
       });
       resolve({
         status: "OK",
-        message: "Success",
-        data: allOrder,
+        message: "SUCCESS",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: null,
+          orderData: allOrder,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);

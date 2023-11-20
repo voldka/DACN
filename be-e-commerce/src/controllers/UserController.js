@@ -152,6 +152,7 @@ const updateUser = async (req, res) => {
         .json({ error: true, message: error.details[0].message });
 
     const response = await UserService.updateUser(userId, data);
+    
     if (response.status == "OK") {
       return res.status(200).json(response);
     } else {
@@ -280,11 +281,20 @@ const refreshToken = async (req, res) => {
 const logoutUser = async (req, res) => {
   try {
     if (req.cookies && req.cookies.refresh_token) {
-      res.clearCookie("refresh_token");
-      return res.status(200).json({
-        status: "OK",
-        message: "Logout successfully",
-      });
+      const userId = req.params.userId;
+      if (!userId) {
+        return res.status(200).json({
+          status: "ERR",  
+          message: "The userId is required",
+        });
+      }
+      const response = await UserService.logoutUser(userId);
+      if (response.status == "OK") {
+        res.clearCookie("refresh_token");
+        return res.status(200).json(response);
+      } else {
+        return res.status(401).json(response);
+      }
     } else {
       return res.status(200).json({
         status: "OK",

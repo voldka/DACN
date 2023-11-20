@@ -37,6 +37,14 @@ const refreshTokenJwtService = (token) => {
             resolve({
               status: "ERR",
               message: "The authemtication",
+              data: {
+                total: null,
+                pageCurrent: null,
+                totalPage: null,
+                userData: null,
+                productData: null,
+                orderData: null,
+              },
             });
           }
           const access_token = await genneralAccessToken({
@@ -55,7 +63,15 @@ const refreshTokenJwtService = (token) => {
           }).save();
           resolve({
             status: "OK",
-            message: "SUCESS",
+            message: "SUCCESS",
+            data: {
+              total: null,
+              pageCurrent: null,
+              totalPage: null,
+              userData: null,
+              productData: null,
+              orderData: null,
+            },
             access_token,
             refresh_token,
           });

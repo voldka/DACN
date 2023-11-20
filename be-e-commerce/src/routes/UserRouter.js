@@ -6,27 +6,40 @@ const {
   authUserMiddleWare,
 } = require("../middleware/authMiddleware");
 const path = require("path");
-const multer = require('multer');
+const multer = require("multer");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.resolve(__dirname, '../', '../', 'public', 'uploads', 'users'));
+    cb(
+      null,
+      path.resolve(__dirname, "../", "../", "public", "uploads", "users")
+    );
   },
   filename: function (req, file, cb) {
     cb(
       null,
-      req.params?.userId+ "-" + file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+      req.params?.userId +
+        "-" +
+        file.fieldname +
+        "-" +
+        Date.now() +
+        path.extname(file.originalname)
     );
   },
 });
-const upload = multer({ storage: storage ,limits: 4*1024*1024});
+const upload = multer({ storage: storage, limits: 4 * 1024 * 1024 });
+
 router.get("/get-by-rating", userController.forgotPasswordUser);
+
 router.post("/forgot-password", userController.forgotPasswordUser);
+
 router.post("/password-reset/:userId/:token", userController.resetPasswordUser);
+
 router.post("/change-password", userController.changePasswordUser);
 router.post("/sign-up", userController.createUser);
 router.post("/sign-in", userController.loginUser);
-router.post("/log-out", userController.logoutUser);
+router.get("/log-out/:userId",authUserMiddleWare, userController.logoutUser);
+
 router.put(
   "/update-user/:userId",
   authUserMiddleWare,
@@ -40,7 +53,7 @@ router.get(
 );
 router.post("/refresh-token", userController.refreshToken);
 
-router.get("/getAll", userController.getAllUser);
+router.get("/getAll", authMiddleWare, userController.getAllUser);
 router.delete(
   "/delete-user/:userId",
   authMiddleWare,

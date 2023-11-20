@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const productSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
-    image: { type: [String], required: true },
+    image: [{ type: [String]}],
     // image: {
     //   data: Buffer,
     //   contentType: String,
@@ -22,6 +22,6 @@ const productSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-const Product = mongoose.model("Product", productSchema);
+const Product = mongoose.model("Products", productSchema);
 
 module.exports = Product;

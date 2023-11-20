@@ -2,7 +2,6 @@ const User = require("../models/UserModel");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const sendEmail = require("../utils/SendEmail.js");
-
 const RefreshToken = require("../models/RefreshToken");
 const { genneralAccessToken, genneralRefreshToken } = require("./JwtService");
 const { resolve } = require("path");
@@ -21,6 +20,14 @@ const createUser = (newUser) => {
         resolve({
           status: "ERR",
           message: "The email is already",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
       const salt = await bcrypt.genSalt(Number(process.env.SALT));
@@ -35,7 +42,14 @@ const createUser = (newUser) => {
         resolve({
           status: "OK",
           message: "CREATE SUCCESS",
-          data: createdUser,
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: createdUser,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
     } catch (e) {
@@ -56,6 +70,14 @@ const loginUser = (userLogin) => {
         resolve({
           status: "ERR",
           message: "The user is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
 
@@ -64,6 +86,14 @@ const loginUser = (userLogin) => {
         resolve({
           status: "ERR",
           message: "The password or user is incorrect",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
 
@@ -83,19 +113,61 @@ const loginUser = (userLogin) => {
         userId: checkUser._id,
         token: refresh_token,
       }).save();
-
       resolve({
         status: "OK",
         message: "SUCCESS",
-        access_token,
-        refresh_token,
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: { id: checkUser.id },
+        },
+        access_token: access_token,
+        refresh_token: refresh_token,
       });
     } catch (e) {
       reject(e);
     }
   });
 };
-
+const logoutUser = async (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const checkUser = await RefreshToken.findOne({
+        userId: id,
+      });
+      if (checkUser === null) {
+        resolve({
+          status: "ERR",
+          message: "The user was logout",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: { id: id },
+          },
+          access_token: null,
+          refresh_token: null,
+        });
+      }
+      await RefreshToken.find({ userId: id }).deleteMany().exec();
+      resolve({
+        status: "OK",
+        message: "SUCCESS",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: { id: id },
+        },
+        access_token: null,
+        refresh_token: null,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 const updateUser = (id, data) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -106,6 +178,14 @@ const updateUser = (id, data) => {
         resolve({
           status: "ERR",
           message: "The user is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
 
@@ -113,7 +193,14 @@ const updateUser = (id, data) => {
       resolve({
         status: "OK",
         message: "SUCCESS",
-        data: updatedUser,
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: updatedUser,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -131,6 +218,14 @@ const deleteUser = (id) => {
         resolve({
           status: "ERR",
           message: "The user is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
 
@@ -138,6 +233,14 @@ const deleteUser = (id) => {
       resolve({
         status: "OK",
         message: "Delete user success",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -152,6 +255,14 @@ const deleteManyUser = (ids) => {
       resolve({
         status: "OK",
         message: "Delete user success",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -166,7 +277,14 @@ const getAllUser = () => {
       resolve({
         status: "OK",
         message: "Success",
-        data: allUser,
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: allUser,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -184,12 +302,27 @@ const getDetailsUser = (id) => {
         resolve({
           status: "ERR",
           message: "The user is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
       resolve({
         status: "OK",
-        message: "SUCESS",
-        data: user,
+        message: "SUCCESS",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: user,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -208,6 +341,14 @@ const changePasswordUser = async (data) => {
         resolve({
           status: "ERR",
           message: "The user is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
 
@@ -219,7 +360,15 @@ const changePasswordUser = async (data) => {
       if (!comparePassword) {
         resolve({
           status: "ERR",
-          message: "The password or user is incorre6ct",
+          message: "The password or user is incorrect",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       } else {
         const salt = await bcrypt.genSalt(Number(process.env.SALT));
@@ -239,7 +388,14 @@ const changePasswordUser = async (data) => {
           resolve({
             status: "OK",
             message: "UPDATE SUCCESS",
-            data: rs,
+            data: {
+              total: null,
+              pageCurrent: null,
+              totalPage: null,
+              userData: rs,
+            },
+            access_token: null,
+            refresh_token: null,
           });
         }
       }
@@ -251,35 +407,53 @@ const changePasswordUser = async (data) => {
 const forgotPasswordUser = (data) => {
   return new Promise(async (resolve, rejects) => {
     try {
-      const user = await User.findOne({ email: data.email });
+      const user = await User.findOne({ email: data.email }); //1
       if (!user) {
+        //2
         resolve({
           status: "ERR",
           message: "user with given email doesn't exist",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
 
-      let token = await AccessToken.findOne({ userId: user._id });
+      let token = await AccessToken.findOne({ userId: user._id }); //4
       if (!token) {
+        //5
         const access_token = await genneralAccessToken({
           id: user.id,
           isAdmin: user.isAdmin,
-        });
+        }); //6
         token = await new AccessToken({
           userId: user._id,
           token: access_token,
-        }).save();
+        }).save(); //7
       }
 
-      const link = `${process.env.BASE_URL}/api/user/password-reset/${user._id}/${token.token}`;
+      const link = `${process.env.BASE_URL}/api/user/password-reset/${user._id}/${token.token}`; //8
       await sendEmail.sendResetPasswordEmail(
         user.email,
         "Password reset",
         link
-      );
+      ); //9
       resolve({
         status: "OK",
         message: "password reset link sent to your email account",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (error) {
       rejects(error);
@@ -289,33 +463,59 @@ const forgotPasswordUser = (data) => {
 const resetPasswordUser = async (data) => {
   return new Promise(async (resolve, rejects) => {
     try {
-      const user = await User.findById(data.userId);
+      const user = await User.findById(data.userId); //1
       if (!user)
-        return resolve({
+        //2
+          resolve({
           status: "ERR",
           message: "Invalid link or expired",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
 
       const token = await AccessToken.findOne({
+        //4
         userId: user._id,
         token: data.token,
       });
       if (!token)
-        return resolve({
+          resolve({
           status: "ERR",
           message: "Invalid link or expired",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
+      //5
 
-      const salt = await bcrypt.genSalt(Number(process.env.SALT));
-      const hash = await bcrypt.hash(data.password, salt);
+      const salt = await bcrypt.genSalt(Number(process.env.SALT)); //7
+      const hash = await bcrypt.hash(data.password, salt); //8
       user.password = hash;
 
-      await user.save();
-      await token.delete();
-
-      return resolve({
+      await user.save(); //9
+      await token.delete(); //10
+      resolve({
         status: "OK",
-        message: "password reset sucessfully.",
+        message: "password reset successfully.",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (error) {
       rejects(error);
@@ -333,4 +533,5 @@ module.exports = {
   changePasswordUser,
   forgotPasswordUser,
   resetPasswordUser,
+  logoutUser,
 };

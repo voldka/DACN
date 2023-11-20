@@ -23,6 +23,15 @@ const createProduct = (newProduct) => {
         resolve({
           status: "ERR",
           message: "The name of product is already",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
       const newProduct = await Product.create({
@@ -38,8 +47,16 @@ const createProduct = (newProduct) => {
       if (newProduct) {
         resolve({
           status: "OK",
-          message: "SUCCESS",
-          data: newProduct,
+          message:"SUCCESS",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: newProduct,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
     } catch (e) {
@@ -57,7 +74,16 @@ const updateProduct = (id, data) => {
       if (checkProduct === null) {
         resolve({
           status: "ERR",
-          message: "The product is not defined",
+          message:"The product is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
 
@@ -66,8 +92,16 @@ const updateProduct = (id, data) => {
       });
       resolve({
         status: "OK",
-        message: "SUCCESS",
-        data: updatedProduct,
+        message:"SUCCESS",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: updatedProduct,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -84,14 +118,32 @@ const deleteProduct = (id) => {
       if (checkProduct === null) {
         resolve({
           status: "ERR",
-          message: "The product is not defined",
+          message:"The product is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
 
       await Product.findByIdAndDelete(id);
       resolve({
         status: "OK",
-        message: "Delete product success",
+        message:"Delete product success",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: null,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -105,7 +157,16 @@ const deleteManyProduct = (ids) => {
       await Product.deleteMany({ _id: ids });
       resolve({
         status: "OK",
-        message: "Delete product success",
+        message:"Delete product success",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: null,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -122,15 +183,32 @@ const getDetailsProduct = (id) => {
       if (product === null) {
         resolve({
           status: "ERR",
-          message: "The product is not defined",
+          message:"The product is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
-
       resolve({
-        status: "OK",
-        message: "SUCESS",
-        data: product,
+        status: "ERR",
+        message:"The product is not defined",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: product,
+        },
+        access_token: null,
+        refresh_token: null,
       });
+
     } catch (e) {
       reject(e);
     }
@@ -150,14 +228,19 @@ const getAllProduct = (limit, page, sort, filter) => {
           .limit(limit)
           .skip(page * limit)
           .sort({ createdAt: -1, updatedAt: -1 });
-        resolve({
-          status: "OK",
-          message: "Success",
-          data: allObjectFilter,
-          total: totalProduct,
-          pageCurrent: Number(page + 1),
-          totalPage: Math.ceil(totalProduct / limit),
-        });
+          resolve({
+            status: "OK",
+            message:"Success",
+            data: {
+              total: totalProduct,
+              pageCurrent: Number(page + 1),
+              totalPage: Math.ceil(totalProduct / limit),
+              userData: null,
+              productData: allObjectFilter,
+            },
+            access_token: null,
+            refresh_token: null,
+          });
       }
       if (sort) {
         const objectSort = {};
@@ -167,14 +250,19 @@ const getAllProduct = (limit, page, sort, filter) => {
           .skip(page * limit)
           .sort(objectSort)
           .sort({ createdAt: -1, updatedAt: -1 });
-        resolve({
-          status: "OK",
-          message: "Success",
-          data: allProductSort,
-          total: totalProduct,
-          pageCurrent: Number(page + 1),
-          totalPage: Math.ceil(totalProduct / limit),
-        });
+          resolve({
+            status: "OK",
+            message:"Success",
+            data: {
+              total: totalProduct,
+              pageCurrent: Number(page + 1),
+              totalPage: Math.ceil(totalProduct / limit),
+              userData: null,
+              productData: allProductSort,
+            },
+            access_token: null,
+            refresh_token: null,
+          });
       }
       if (!limit) {
         allProduct = await Product.find().sort({
@@ -189,11 +277,16 @@ const getAllProduct = (limit, page, sort, filter) => {
       }
       resolve({
         status: "OK",
-        message: "Success",
-        data: allProduct,
-        total: totalProduct,
-        pageCurrent: Number(page + 1),
-        totalPage: Math.ceil(totalProduct / limit),
+        message:"Success",
+        data: {
+          total: totalProduct,
+          pageCurrent: Number(page + 1),
+          totalPage: Math.ceil(totalProduct / limit),
+          userData: null,
+          productData: allProduct,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -207,8 +300,16 @@ const getAllType = () => {
       const allType = await Product.distinct("type");
       resolve({
         status: "OK",
-        message: "Success",
-        data: allType,
+        message:"Success",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: allType,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
