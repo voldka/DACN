@@ -11,10 +11,7 @@ const CarouselSchema = new Schema(
       type: Schema.Types.String,
       required: true,
     },
-    image: {
-      type: Schema.Types.String,
-      required: true,
-    },
+    images: [{ type: [String] }],
   },
   {
     timestamps: true,

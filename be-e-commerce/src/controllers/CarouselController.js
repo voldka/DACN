@@ -13,7 +13,7 @@ const createCarousel = async (req, res) => {
 
     const data = {
       ...req.body, // Copy all properties from req.body
-      image: images,
+      images: images,
       //  {
       //   // data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
       //   // contentType: "image/png",
@@ -62,7 +62,7 @@ const updateCarousel = async (req, res) => {
 
     const data = {
       ...req.body, // Copy all properties from req.body
-      image: images,
+      images: images,
       //  {
       //   // data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
       //   // contentType: "image/png",

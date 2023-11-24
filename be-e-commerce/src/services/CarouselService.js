@@ -2,7 +2,7 @@ const CarouselModel = require("../models/CarouselModel");
 
 const createCarousel = (newCarousel) => {
   return new Promise(async (resolve, reject) => {
-    const { name, description, link } = newCarousel;
+    const { name, description, images } = newCarousel;
     try {
       const checkCarousel = await CarouselModel.findOne({
         name: name,
@@ -28,7 +28,7 @@ const createCarousel = (newCarousel) => {
       const newCarousel = await CarouselModel.create({
         name,
         description,
-        link,
+        images,
       });
       if (newCarousel) {
         resolve({
