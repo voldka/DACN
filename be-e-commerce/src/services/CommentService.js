@@ -19,6 +19,7 @@ const createComment = (data) => {
             total: null,
             pageCurrent: null,
             totalPage: null,
+
             userData: null,
             productData: null,
             orderData: null,
@@ -208,6 +209,7 @@ const getCommentsOfProduct = (id, limit, page, sort, filter) => {
             total: totalComments,
             pageCurrent: Number(page + 1),
             totalPage: Math.ceil(totalComments / limit),
+
             userData: null,
             productData: null,
             orderData: null,
@@ -236,8 +238,10 @@ const getCommentsOfProduct = (id, limit, page, sort, filter) => {
           total: totalComments,
           pageCurrent: Number(page + 1),
           totalPage: Math.ceil(totalComments / limit),
+
           userData: null,
           productData: null,
+          orderData: null,
           carouselData: null,
           commentData: allComments,
         },
@@ -271,10 +275,12 @@ const getCommentOfUser = (id, limit, page, sort, filter) => {
             total: totalComments,
             pageCurrent: Number(page + 1),
             totalPage: Math.ceil(totalComments / limit),
+
             userData: null,
             productData: null,
             orderData: null,
-            carouselData: allObjectFilter,
+            carouselData: null,
+            commentData: allObjectFilter
           },
           access_token: null,
           refresh_token: null,
@@ -298,7 +304,8 @@ const getCommentOfUser = (id, limit, page, sort, filter) => {
             userData: null,
             productData: null,
             orderData: null,
-            carouselData: allCommentSort,
+            carouselData: null,
+            commentData:allCommentSort,
           },
           access_token: null,
           refresh_token: null,
@@ -325,6 +332,7 @@ const getCommentOfUser = (id, limit, page, sort, filter) => {
           userData: null,
           productData: null,
           carouselData: null,
+          orderData:null,
           commentData: allComments,
         },
         access_token: null,

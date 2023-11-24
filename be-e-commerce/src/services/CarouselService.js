@@ -19,6 +19,7 @@ const createCarousel = (newCarousel) => {
             productData: null,
             orderData: null,
             carouselData: null,
+            commentData: null,
           },
           access_token: null,
           refresh_token: null,
@@ -41,6 +42,7 @@ const createCarousel = (newCarousel) => {
             productData: null,
             orderData: null,
             carouselData: newCarousel,
+            commentData: null,
           },
           access_token: null,
           refresh_token: null,
@@ -70,6 +72,7 @@ const updateCarousel = (id, data) => {
             productData: null,
             orderData: null,
             carouselData: null,
+            commentData: null,
           },
           access_token: null,
           refresh_token: null,
@@ -90,6 +93,7 @@ const updateCarousel = (id, data) => {
           productData: null,
           orderData: null,
           carouselData: updatedCarousel,
+          commentData: null,
         },
         access_token: null,
         refresh_token: null,
@@ -118,6 +122,7 @@ const deleteCarousel = (id) => {
             productData: null,
             orderData: null,
             carouselData: null,
+            commentData: null,
           },
           access_token: null,
           refresh_token: null,
@@ -161,6 +166,7 @@ const deleteManyCarousel = (ids) => {
           productData: null,
           orderData: null,
           carouselData: null,
+          commentData: null,
         },
         access_token: null,
         refresh_token: null,
@@ -189,6 +195,7 @@ const getDetailsCarousel = (id) => {
             productData: null,
             orderData: null,
             carouselData: null,
+            commentData: null,
           },
           access_token: null,
           refresh_token: null,
@@ -205,6 +212,7 @@ const getDetailsCarousel = (id) => {
           productData: null,
           orderData: null,
           carouselData: Carousel,
+          commentData: null,
         },
         access_token: null,
         refresh_token: null,
@@ -228,21 +236,22 @@ const getAllCarousel = (limit, page, sort, filter) => {
           .limit(limit)
           .skip(page * limit)
           .sort({ createdAt: -1, updatedAt: -1 });
-          resolve({
-            status: "OK",
-            message: "SUCCESS",
-            data: {
-              total: totalCarousel,
-              pageCurrent: Number(page + 1),
-              totalPage: Math.ceil(totalCarousel / limit),
-              userData: null,
-              productData: null,
-              orderData: null,
-              carouselData: allObjectFilter,
-            },
-            access_token: null,
-            refresh_token: null,
-          });
+        resolve({
+          status: "OK",
+          message: "SUCCESS",
+          data: {
+            total: totalCarousel,
+            pageCurrent: Number(page + 1),
+            totalPage: Math.ceil(totalCarousel / limit),
+            userData: null,
+            productData: null,
+            orderData: null,
+            carouselData: allObjectFilter,
+            commentData: null,
+          },
+          access_token: null,
+          refresh_token: null,
+        });
       }
       if (sort) {
         const objectSort = {};
@@ -252,21 +261,22 @@ const getAllCarousel = (limit, page, sort, filter) => {
           .skip(page * limit)
           .sort(objectSort)
           .sort({ createdAt: -1, updatedAt: -1 });
-          resolve({
-            status: "OK",
-            message: "SUCCESS",
-            data: {
-              total: totalCarousel,
-              pageCurrent: Number(page + 1),
-              totalPage: Math.ceil(totalCarousel / limit),
-              userData: null,
-              productData: null,
-              orderData: null,
-              carouselData: allCarouselSort,
-            },
-            access_token: null,
-            refresh_token: null,
-          });
+        resolve({
+          status: "OK",
+          message: "SUCCESS",
+          data: {
+            total: totalCarousel,
+            pageCurrent: Number(page + 1),
+            totalPage: Math.ceil(totalCarousel / limit),
+            userData: null,
+            productData: null,
+            orderData: null,
+            carouselData: allCarouselSort,
+            commentData: null,
+          },
+          access_token: null,
+          refresh_token: null,
+        });
       }
       if (!limit) {
         allCarousel = await CarouselModel.find().sort({
@@ -290,6 +300,7 @@ const getAllCarousel = (limit, page, sort, filter) => {
           productData: null,
           orderData: null,
           carouselData: allCarousel,
+          commentData: null,
         },
         access_token: null,
         refresh_token: null,
