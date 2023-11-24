@@ -2,6 +2,70 @@ const Order = require("../models/OrderProduct");
 const Product = require("../models/ProductModel");
 const SendEmail = require("../utils/SendEmail");
 
+const findAllProductUserBought = (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const orders = await Order.find({ user: userId });
+      const orderCount = orders.length;
+      if (orderCount==0) {
+        resolve({
+          status: "ERR",
+          message: `Nguoi dung voi id: ${userId} chua tung mua hang`,
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+            orderData: null,
+          },
+          access_token: null,
+          refresh_token: null,
+        });
+
+        const uniqueOrderItems = new Set();
+        orders.forEach((order) => {
+          order.orderItems.forEach((item) => {
+            uniqueOrderItems.add(item);
+          });
+        });
+        if (!uniqueOrderItems) {
+          resolve({
+            status: "OK",
+            message: `complete`,
+            data: {
+              total: null,
+              pageCurrent: null,
+              totalPage: null,
+              userData: null,
+              productData: uniqueOrderItems,
+              orderData: null,
+            },
+            access_token: null,
+            refresh_token: null,
+          });
+        }
+        resolve({
+          status: "ERR",
+          message: `fail`,
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+            orderData: null,
+          },
+          access_token: null,
+          refresh_token: null,
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 const createOrder = (newOrder) => {
   return new Promise(async (resolve, reject) => {
     const {
@@ -191,7 +255,6 @@ const getAllOrderDetails = (id) => {
         access_token: null,
         refresh_token: null,
       });
-
     } catch (e) {
       // console.log('e', e)
       reject(e);
@@ -308,8 +371,8 @@ const cancelOrderDetails = (id, data) => {
         });
       }
       resolve({
-        status: "ERR",
-        message: `San pham voi id: ${newData} khong ton tai`,
+        status: "OK",
+        message: `Complete`,
         data: {
           total: null,
           pageCurrent: null,
@@ -361,4 +424,5 @@ module.exports = {
   getOrderDetails,
   cancelOrderDetails,
   getAllOrder,
+  findAllProductUserBought,
 };

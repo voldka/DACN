@@ -25,6 +25,7 @@ app.use("/api/product",  require("./routes/ProductRouter"));
 app.use("/api/order", require("./routes/OrderRouter"));
 app.use("/api/payment",  require("./routes/PaymentRouter"));
 app.use("/api/carousel", require("./routes/CarouselRouter"));
+app.use("/api/comment", require("./routes/CommentRouter"))
 
 mongo.connect();
 

@@ -14,7 +14,7 @@ router.get(
   OrderController.getAllOrderDetails
 );
 router.get(
-  "/get-details-order/:orderId/:userId",
+  "/get-details-order/:userId/:orderId",
   authUserMiddleWare,
   OrderController.getDetailsOrder
 );

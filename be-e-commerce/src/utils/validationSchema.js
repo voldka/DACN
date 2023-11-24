@@ -123,6 +123,23 @@ const createCarouselSchemaBodyValidation = (body) => {
   });
   return schema.validate(body);
 };
+const commentSchemaValidation = (body) => {
+  const schema = Joi.object({
+    product: Joi.string().required().label("productId"),
+    user: Joi.string().required().label("userId"),
+    content: Joi.string().required().label("content"),
+    images: Joi.array().items(Joi.string()).label("images"),
+  });
+  return schema.validate(body);
+};
+const ratingSchemaValidation = (body) => {
+  const schema = Joi.object({
+    userId: Joi.string().required().label("userId"),
+    productId: Joi.string().required().label("productId"),
+    starts: Joi.number().min(0).max(5).label("starts"),
+  });
+  return schema.validate(body);
+};
 module.exports = {
   signUpBodyValidation,
   logInBodyValidation,
@@ -135,4 +152,6 @@ module.exports = {
   forgotPassworSchemaBodyValidation,
   resetPasswordSchemaBodyValidation,
   createCarouselSchemaBodyValidation,
+  commentSchemaValidation,
+  ratingSchemaValidation,
 };

@@ -1,7 +1,4 @@
 const CarouselModel = require("../models/CarouselModel");
-const multer = require("multer");
-var fs = require("fs");
-var path = require("path");
 
 const createCarousel = (newCarousel) => {
   return new Promise(async (resolve, reject) => {

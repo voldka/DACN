@@ -2,6 +2,35 @@ const { array } = require("joi");
 const ProductService = require("../services/ProductService");
 const validationSchema = require("../utils/validationSchema");
 
+const ratingProduct = async (req, res) => {
+  try {
+    const userId = req.params?.userId;
+    const productId = req.params?.productId;
+    const starts = req.body?.starts;
+    const { error } = validationSchema.ratingSchemaValidation({
+      userId,
+      productId,
+      starts,
+    });
+    if (error)
+      return res
+        .status(401)
+        .json({ error: true, message: error.details[0].message });
+
+    const response = await ProductService.ratingProduct({
+      productId,
+      userId,
+      starts,
+    });
+    return res.status(200).json(response);
+  } catch (e) {
+    console.log(e);
+    return res.status(404).json({
+      message: e.message,
+    });
+  }
+};
+
 const createProduct = async (req, res) => {
   try {
     // let name ="";
@@ -9,7 +38,10 @@ const createProduct = async (req, res) => {
 
     // const imagePath = process.env.BASE_URL + '/uploads/product/' + req.file.filename;
     const newImages = req.files.map(
-      (file) => process.env.BASE_URL + "/uploads/product/" + file.filename.replace(/\s/g, "")
+      (file) =>
+        process.env.BASE_URL +
+        "/uploads/product/" +
+        file.filename.replace(/\s/g, "")
     );
 
     let images = new Array();
@@ -43,7 +75,7 @@ const createProduct = async (req, res) => {
     const response = await ProductService.createProduct(data);
     return res.status(200).json(response);
   } catch (e) {
-    console.log(error);
+    console.log(e);
     return res.status(404).json({
       message: e.message,
     });
@@ -61,7 +93,10 @@ const updateProduct = async (req, res) => {
     }
 
     const newImages = req.files.map(
-      (file) => process.env.BASE_URL + "/uploads/product/" + file.filename.replace(/\s/g, "")
+      (file) =>
+        process.env.BASE_URL +
+        "/uploads/product/" +
+        file.filename.replace(/\s/g, "")
     );
 
     let images = new Array();
@@ -75,9 +110,7 @@ const updateProduct = async (req, res) => {
       //   // contentType: "image/png",
       // },
     };
-    const { error } = validationSchema.createProductSchemaBodyValidation(
-      data
-    );
+    const { error } = validationSchema.createProductSchemaBodyValidation(data);
     if (error)
       return res
         .status(401)
@@ -92,7 +125,7 @@ const updateProduct = async (req, res) => {
     // };
 
     const response = await ProductService.updateProduct(productId, data);
-    
+
     return res.status(200).json(response);
   } catch (e) {
     return res.status(404).json({
@@ -191,4 +224,5 @@ module.exports = {
   getAllProduct,
   deleteMany,
   getAllType,
+  ratingProduct,
 };
