@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-
+// for admin
 const authMiddleWare = (req, res, next) => {
   let token = req.header("x-access-token");
   if (!token)
@@ -43,7 +43,7 @@ const authMiddleWare = (req, res, next) => {
       .json({ error: true, message: "Access Denied: Invalid token" });
   }
 };
-
+//for user, admin
 const authUserMiddleWare = async (req, res, next) => {
   let token = req.header("x-access-token");
   if (!token)
@@ -89,6 +89,7 @@ const authUserMiddleWare = async (req, res, next) => {
       .json({ error: true, message: "Access Denied: Invalid token" });
   }
 };
+// in case only check token exit
 const authUserMiddleWarecustom = async (req, res, next) => {
   let token = req.header("x-access-token");
   if (!token)

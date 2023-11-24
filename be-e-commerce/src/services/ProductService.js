@@ -1,7 +1,168 @@
 const Product = require("../models/ProductModel");
+const Order = require("../models/OrderProduct");
+const RatingList = require("../models/RatingList");
 const multer = require("multer");
 var fs = require("fs");
 var path = require("path");
+const OderService = require("../services/OrderService");
+const { set } = require("mongoose");
+const mongoose = require("mongoose");
+
+const hasProductId = (productsSet, productId) => {
+  let stringProduct;
+  for (let product of productsSet) {
+    stringProduct = product.product.toString();
+    if (stringProduct == productId) {
+      return true;
+    }
+  }
+  return false;
+};
+const ratingProduct = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let { productId, userId, starts } = data;
+      // const userObjectId = mongoose.Types.ObjectId(userId); // Thay 'userIdString' bằng giá trị ObjectId của user
+      // const productObjectId = mongoose.Types.ObjectId(productId);
+      const flagRatingList = await RatingList.find({
+        user: userId,
+        product: productId,
+      });
+      if (flagRatingList.length === 0) {
+        // tim list order của user
+        const orders = await Order.find({ user: userId });
+        const orderCount = orders.length;
+        //set products user đã mua
+        let products = new Set();
+        orders.forEach((order) => {
+          order.orderItems.forEach((item) => {
+            products.add(item);
+          });
+        });
+
+        let count = products.size;
+        if (!count) {
+          resolve({
+            status: "ERR",
+            message: `Nguoi dung voi id: ${userId} chua tung mua hang`,
+            data: {
+              total: null,
+              pageCurrent: null,
+              totalPage: null,
+
+              userData: null,
+              productData: null,
+              orderData: null,
+              carouselData: null,
+              commentData: null,
+            },
+            access_token: null,
+            refresh_token: null,
+          });
+        }
+
+        // let setProduct = new Set();
+        // setProduct = products.productData;
+
+        if (hasProductId(products, productId)) {
+          let product = await getDetailsProduct(productId);
+          if (product.status == "ERR") {
+            resolve({
+              status: "ERR",
+              message: `khong the tim thay product voi id: ${productId}`,
+              data: {
+                total: null,
+                pageCurrent: null,
+                totalPage: null,
+
+                userData: null,
+                productData: null,
+                orderData: null,
+                carouselData: null,
+                commentData: null,
+              },
+              access_token: null,
+              refresh_token: null,
+            });
+          }
+          let productInDb = product.data.productData;
+          productInDb.countRating = productInDb.countRating + 1;
+          productInDb.rating =
+            (productInDb.rating * (productInDb.countRating - 1) + starts) /
+            productInDb.countRating;
+          const productAfterUpdate = await Product.findByIdAndUpdate(
+            productInDb.id,
+            productInDb,
+            {
+              new: true,
+            }
+          );
+
+          await RatingList.create({
+            user: userId,
+            product: productId,
+          });
+          // let productAfterUpdate = await updateProduct(productInDb.id, productInDb);
+          resolve({
+            status: "OK",
+            message: `Complete`,
+            data: {
+              total: null,
+              pageCurrent: null,
+              totalPage: null,
+
+              userData: null,
+              productData: productAfterUpdate,
+              orderData: null,
+              carouselData: null,
+              commentData: null,
+            },
+            access_token: null,
+            refresh_token: null,
+          });
+        } else {
+          resolve({
+            status: "ERR",
+            message: `Nguoi dung voi id: ${userId} khong dc danh gia san pham chua tung thuc hien giao dich`,
+            data: {
+              total: null,
+              pageCurrent: null,
+              totalPage: null,
+              
+              userData: null,
+              productData: null,
+              orderData: null,
+              carouselData: null,
+              commentData: null,
+            },
+            access_token: null,
+            refresh_token: null,
+          });
+        }
+      } else {
+        resolve({
+          status: "ERR",
+          message: `Nguoi dung voi id: ${userId} da danh gia san pham id: ${productId}`,
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            
+            userData: null,
+            productData: null,
+            orderData: null,
+            carouselData: null,
+            commentData: null,
+          },
+          access_token: null,
+          refresh_token: null,
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 
 const createProduct = (newProduct) => {
   return new Promise(async (resolve, reject) => {
@@ -23,6 +184,18 @@ const createProduct = (newProduct) => {
         resolve({
           status: "ERR",
           message: "The name of product is already",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+            orderData: null,
+            carouselData: null,
+            commentData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
       const newProduct = await Product.create({
@@ -39,7 +212,18 @@ const createProduct = (newProduct) => {
         resolve({
           status: "OK",
           message: "SUCCESS",
-          data: newProduct,
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: newProduct,
+            orderData: null,
+            carouselData: null,
+            commentData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
     } catch (e) {
@@ -58,6 +242,18 @@ const updateProduct = (id, data) => {
         resolve({
           status: "ERR",
           message: "The product is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+            orderData: null,
+            carouselData: null,
+            commentData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
 
@@ -67,7 +263,18 @@ const updateProduct = (id, data) => {
       resolve({
         status: "OK",
         message: "SUCCESS",
-        data: updatedProduct,
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: updatedProduct,
+          orderData: null,
+          carouselData: null,
+          commentData: null,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -85,6 +292,18 @@ const deleteProduct = (id) => {
         resolve({
           status: "ERR",
           message: "The product is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+            orderData: null,
+            carouselData: null,
+            commentData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
 
@@ -92,6 +311,18 @@ const deleteProduct = (id) => {
       resolve({
         status: "OK",
         message: "Delete product success",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: null,
+          orderData: null,
+          carouselData: null,
+          commentData: null,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -106,6 +337,18 @@ const deleteManyProduct = (ids) => {
       resolve({
         status: "OK",
         message: "Delete product success",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: null,
+          orderData: null,
+          carouselData: null,
+          commentData: null,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -123,13 +366,35 @@ const getDetailsProduct = (id) => {
         resolve({
           status: "ERR",
           message: "The product is not defined",
+          data: {
+            total: null,
+            pageCurrent: null,
+            totalPage: null,
+            userData: null,
+            productData: null,
+            orderData: null,
+            carouselData: null,
+            commentData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
-
       resolve({
         status: "OK",
-        message: "SUCESS",
-        data: product,
+        message: "Complete",
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: product,
+          orderData: null,
+          carouselData: null,
+          commentData: null,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -153,10 +418,19 @@ const getAllProduct = (limit, page, sort, filter) => {
         resolve({
           status: "OK",
           message: "Success",
-          data: allObjectFilter,
-          total: totalProduct,
-          pageCurrent: Number(page + 1),
-          totalPage: Math.ceil(totalProduct / limit),
+          data: {
+            total: totalProduct,
+            pageCurrent: Number(page + 1),
+            totalPage: Math.ceil(totalProduct / limit),
+            userData: null,
+            productData: allObjectFilter,
+
+            orderData: null,
+            carouselData: null,
+            commentData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
       if (sort) {
@@ -170,10 +444,18 @@ const getAllProduct = (limit, page, sort, filter) => {
         resolve({
           status: "OK",
           message: "Success",
-          data: allProductSort,
-          total: totalProduct,
-          pageCurrent: Number(page + 1),
-          totalPage: Math.ceil(totalProduct / limit),
+          data: {
+            total: totalProduct,
+            pageCurrent: Number(page + 1),
+            totalPage: Math.ceil(totalProduct / limit),
+            userData: null,
+            productData: allProductSort,
+            orderData: null,
+            carouselData: null,
+            commentData: null,
+          },
+          access_token: null,
+          refresh_token: null,
         });
       }
       if (!limit) {
@@ -190,10 +472,18 @@ const getAllProduct = (limit, page, sort, filter) => {
       resolve({
         status: "OK",
         message: "Success",
-        data: allProduct,
-        total: totalProduct,
-        pageCurrent: Number(page + 1),
-        totalPage: Math.ceil(totalProduct / limit),
+        data: {
+          total: totalProduct,
+          pageCurrent: Number(page + 1),
+          totalPage: Math.ceil(totalProduct / limit),
+          userData: null,
+          productData: allProduct,
+          orderData: null,
+          carouselData: null,
+          commentData: null,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -208,7 +498,18 @@ const getAllType = () => {
       resolve({
         status: "OK",
         message: "Success",
-        data: allType,
+        data: {
+          total: null,
+          pageCurrent: null,
+          totalPage: null,
+          userData: null,
+          productData: allType,
+          orderData: null,
+          carouselData: null,
+          commentData: null,
+        },
+        access_token: null,
+        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -224,4 +525,5 @@ module.exports = {
   getAllProduct,
   deleteManyProduct,
   getAllType,
+  ratingProduct,
 };

@@ -11,7 +11,7 @@ const CarouselSchema = new Schema(
       type: Schema.Types.String,
       required: true,
     },
-    link: {
+    image: {
       type: Schema.Types.String,
       required: true,
     },
@@ -21,5 +21,5 @@ const CarouselSchema = new Schema(
   }
 );
 
-const CarouselModel = mongoose.model("Carousel model", CarouselSchema);
+const CarouselModel = mongoose.model("Carousels", CarouselSchema);
 module.exports = CarouselModel;

@@ -1,14 +1,62 @@
+const { array } = require("joi");
 const ProductService = require("../services/ProductService");
 const validationSchema = require("../utils/validationSchema");
 
+const ratingProduct = async (req, res) => {
+  try {
+    const userId = req.params?.userId;
+    const productId = req.params?.productId;
+    const starts = req.body?.starts;
+    const { error } = validationSchema.ratingSchemaValidation({
+      userId,
+      productId,
+      starts,
+    });
+    if (error)
+      return res
+        .status(401)
+        .json({ error: true, message: error.details[0].message });
 
+    const response = await ProductService.ratingProduct({
+      productId,
+      userId,
+      starts,
+    });
+    return res.status(200).json(response);
+  } catch (e) {
+    console.log(e);
+    return res.status(404).json({
+      message: e.message,
+    });
+  }
+};
 
 const createProduct = async (req, res) => {
   try {
-    //sai logic b1 tao object = req, b2 validation,..
-    const { error } = validationSchema.createProductSchemaBodyValidation(
-      req.body
+    // let name ="";
+    // name = req.body?.name.replace(/\s/g, "")
+
+    // const imagePath = process.env.BASE_URL + '/uploads/product/' + req.file.filename;
+    const newImages = req.files.map(
+      (file) =>
+        process.env.BASE_URL +
+        "/uploads/product/" +
+        file.filename.replace(/\s/g, "")
     );
+
+    let images = new Array();
+    images = images.concat(newImages);
+
+    const data = {
+      ...req.body, // Copy all properties from req.body
+      image: images,
+      //  {
+      //   // data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
+      //   // contentType: "image/png",
+      // },
+    };
+    //sai logic b1 tao object = req, b2 validation,..
+    const { error } = validationSchema.createProductSchemaBodyValidation(data);
     if (error)
       return res
         .status(401)
@@ -24,9 +72,10 @@ const createProduct = async (req, res) => {
     //   // },
     // };
 
-    const response = await ProductService.createProduct(req.body);
+    const response = await ProductService.createProduct(data);
     return res.status(200).json(response);
   } catch (e) {
+    console.log(e);
     return res.status(404).json({
       message: e.message,
     });
@@ -43,9 +92,25 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    const { error } = validationSchema.createProductSchemaBodyValidation(
-      req.body
+    const newImages = req.files.map(
+      (file) =>
+        process.env.BASE_URL +
+        "/uploads/product/" +
+        file.filename.replace(/\s/g, "")
     );
+
+    let images = new Array();
+    images = images.concat(newImages);
+
+    const data = {
+      ...req.body, // Copy all properties from req.body
+      image: images,
+      //  {
+      //   // data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
+      //   // contentType: "image/png",
+      // },
+    };
+    const { error } = validationSchema.createProductSchemaBodyValidation(data);
     if (error)
       return res
         .status(401)
@@ -59,7 +124,8 @@ const updateProduct = async (req, res) => {
     //   },
     // };
 
-    const response = await ProductService.updateProduct(productId, req.body);
+    const response = await ProductService.updateProduct(productId, data);
+
     return res.status(200).json(response);
   } catch (e) {
     return res.status(404).json({
@@ -158,4 +224,5 @@ module.exports = {
   getAllProduct,
   deleteMany,
   getAllType,
+  ratingProduct,
 };

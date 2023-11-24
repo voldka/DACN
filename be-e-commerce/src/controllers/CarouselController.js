@@ -4,8 +4,23 @@ const validationSchema = require("../utils/validationSchema");
 
 const createCarousel = async (req, res) => {
   try {
+    const newImages = req.files.map(
+      (file) => process.env.BASE_URL + "/uploads/carousel/" + file.filename.replace(/\s/g, "")
+    );
+
+    let images = new Array();
+    images = images.concat(newImages);
+
+    const data = {
+      ...req.body, // Copy all properties from req.body
+      image: images,
+      //  {
+      //   // data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
+      //   // contentType: "image/png",
+      // },
+    };
     const { error } = validationSchema.createCarouselSchemaBodyValidation(
-      req.body
+      data
     );
     if (error)
       return res
@@ -20,7 +35,7 @@ const createCarousel = async (req, res) => {
     //   },
     // };
 
-    const response = await CarouselService.createCarousel(req.body);
+    const response = await CarouselService.createCarousel(data);
     return res.status(200).json(response);
   } catch (e) {
     return res.status(404).json({
@@ -38,9 +53,23 @@ const updateCarousel = async (req, res) => {
         message: "The CarouselId is required",
       });
     }
+    const newImages = req.files.map(
+      (file) => process.env.BASE_URL + "/uploads/carousel/" + file.filename.replace(/\s/g, "")
+    );
 
+    let images = new Array();
+    images = images.concat(newImages);
+
+    const data = {
+      ...req.body, // Copy all properties from req.body
+      image: images,
+      //  {
+      //   // data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
+      //   // contentType: "image/png",
+      // },
+    };
     const { error } = validationSchema.createCarouselSchemaBodyValidation(
-      req.body
+      data
     );
     if (error)
       return res
