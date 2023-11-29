@@ -32,7 +32,7 @@ const findAllProductUserBought = (userId) => {
         if (!uniqueOrderItems) {
           resolve({
             status: "OK",
-            message: `complete`,
+            message: `Thành công`,
             data: {
               total: null,
               pageCurrent: null,
@@ -97,7 +97,7 @@ const createOrder = (newOrder) => {
         if (productData) {
           return {
             status: "OK",
-            message: "SUCCESS",
+            message: "Thành công",
           };
         } else {
           return {
@@ -146,7 +146,7 @@ const createOrder = (newOrder) => {
           );
           return {
             status: "OK",
-            message: "SUCCESS",
+            message: "Thành công",
           };
         });
         const resultsUpdate = await Promise.all(promisesupdate);
@@ -171,7 +171,7 @@ const createOrder = (newOrder) => {
           await SendEmail.sendEmailCreateOrder(email, orderItems);
           resolve({
             status: "OK",
-            message: "success",
+            message: "Thành công",
             data: {
               total: null,
               pageCurrent: null,
@@ -199,7 +199,7 @@ const deleteManyProduct = (ids) => {
       await Product.deleteMany({ _id: ids });
       resolve({
         status: "OK",
-        message: "Delete product success",
+        message: "Xóa sản phẩm thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -228,7 +228,7 @@ const getAllOrderDetails = (id) => {
       if (order === null) {
         resolve({
           status: "ERR",
-          message: "The order is not defined",
+          message: "Không tìm thấy",
           data: {
             total: null,
             pageCurrent: null,
@@ -243,7 +243,7 @@ const getAllOrderDetails = (id) => {
       }
       resolve({
         status: "OK",
-        message: "SUCCESSS",
+        message: "Thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -271,7 +271,7 @@ const getOrderDetails = (id) => {
       if (order === null) {
         resolve({
           status: "ERR",
-          message: "The order is not defined",
+          message: "Không tìm thấy",
           data: {
             total: null,
             pageCurrent: null,
@@ -286,7 +286,7 @@ const getOrderDetails = (id) => {
       }
       resolve({
         status: "OK",
-        message: "SUCCESSS",
+        message: "Thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -330,7 +330,7 @@ const cancelOrderDetails = (id, data) => {
           if (order === null) {
             resolve({
               status: "ERR",
-              message: "The order is not defined",
+              message: "Không tìm thấy",
               data: {
                 total: null,
                 pageCurrent: null,
@@ -372,7 +372,7 @@ const cancelOrderDetails = (id, data) => {
       }
       resolve({
         status: "OK",
-        message: `Complete`,
+        message: `Thành công`,
         data: {
           total: null,
           pageCurrent: null,
@@ -400,7 +400,7 @@ const getAllOrder = () => {
       });
       resolve({
         status: "OK",
-        message: "SUCCESS",
+        message: "Thành công",
         data: {
           total: null,
           pageCurrent: null,

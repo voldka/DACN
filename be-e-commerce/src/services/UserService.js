@@ -45,7 +45,7 @@ const createUser = (newUser) => {
       if (createdUser) {
         resolve({
           status: "OK",
-          message: "CREATE SUCCESS",
+          message: "CREATE Thành công",
           data: {
             total: null,
             pageCurrent: null,
@@ -77,12 +77,12 @@ const loginUser = (userLogin) => {
       if (checkUser === null) {
         resolve({
           status: "ERR",
-          message: "The user is not defined",
+          message: "Không tìm thấy",
           data: {
             total: null,
             pageCurrent: null,
             totalPage: null,
-            userData: null,
+            userData: checkUser,
             productData: null,
             orderData: null,
             carouselData: null,
@@ -97,7 +97,7 @@ const loginUser = (userLogin) => {
       if (!comparePassword) {
         resolve({
           status: "ERR",
-          message: "The password or user is incorrect",
+          message: "Mật khẩu không chính xác",
           data: {
             total: null,
             pageCurrent: null,
@@ -131,7 +131,7 @@ const loginUser = (userLogin) => {
       }).save();
       resolve({
         status: "OK",
-        message: "SUCCESS",
+        message: "Thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -159,7 +159,7 @@ const logoutUser = async (id) => {
       if (checkUser === null) {
         resolve({
           status: "ERR",
-          message: "The user was logout",
+          message: "Đã đăng xuất",
           data: {
             total: null,
             pageCurrent: null,
@@ -177,7 +177,7 @@ const logoutUser = async (id) => {
       await RefreshToken.find({ userId: id }).deleteMany().exec();
       resolve({
         status: "OK",
-        message: "SUCCESS",
+        message: "Thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -205,7 +205,7 @@ const updateUser = (id, data) => {
       if (checkUser === null) {
         resolve({
           status: "ERR",
-          message: "The user is not defined",
+          message: "Không tìm thấy",
           data: {
             total: null,
             pageCurrent: null,
@@ -224,7 +224,7 @@ const updateUser = (id, data) => {
       const updatedUser = await User.findByIdAndUpdate(id, data, { new: true });
       resolve({
         status: "OK",
-        message: "SUCCESS",
+        message: "Thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -253,7 +253,7 @@ const deleteUser = (id) => {
       if (checkUser === null) {
         resolve({
           status: "ERR",
-          message: "The user is not defined",
+          message: "Không tìm thấy",
           data: {
             total: null,
             pageCurrent: null,
@@ -272,7 +272,7 @@ const deleteUser = (id) => {
       await User.findByIdAndDelete(id);
       resolve({
         status: "OK",
-        message: "Delete user success",
+        message: "Thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -298,7 +298,7 @@ const deleteManyUser = (ids) => {
       await User.deleteMany({ _id: ids });
       resolve({
         status: "OK",
-        message: "Delete user success",
+        message: "Thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -324,7 +324,7 @@ const getAllUser = () => {
       const allUser = await User.find().sort({ createdAt: -1, updatedAt: -1 });
       resolve({
         status: "OK",
-        message: "Success",
+        message: "Thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -353,7 +353,7 @@ const getDetailsUser = (id) => {
       if (user === null) {
         resolve({
           status: "ERR",
-          message: "The user is not defined",
+          message: "Không tìm thấy",
           data: {
             total: null,
             pageCurrent: null,
@@ -370,7 +370,7 @@ const getDetailsUser = (id) => {
       }
       resolve({
         status: "OK",
-        message: "SUCCESS",
+        message: "Thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -400,7 +400,7 @@ const changePasswordUser = async (data) => {
       if (checkUser === null) {
         resolve({
           status: "ERR",
-          message: "The user is not defined",
+          message: "Không tìm thấy",
           data: {
             total: null,
             pageCurrent: null,
@@ -424,7 +424,7 @@ const changePasswordUser = async (data) => {
       if (!comparePassword) {
         resolve({
           status: "ERR",
-          message: "The password or user is incorrect",
+          message: "Mật khẩu không chính xác",
           data: {
             total: null,
             pageCurrent: null,
@@ -455,7 +455,7 @@ const changePasswordUser = async (data) => {
         if (rs) {
           resolve({
             status: "OK",
-            message: "UPDATE SUCCESS",
+            message: "Cập nhật Thành công",
             data: {
               total: null,
               pageCurrent: null,
@@ -484,7 +484,7 @@ const forgotPasswordUser = (data) => {
         //2
         resolve({
           status: "ERR",
-          message: "user with given email doesn't exist",
+          message: "Email của tài khoản không tồn tại",
           data: {
             total: null,
             pageCurrent: null,
@@ -521,7 +521,7 @@ const forgotPasswordUser = (data) => {
       ); //9
       resolve({
         status: "OK",
-        message: "password reset link sent to your email account",
+        message: "Liên kết đặt lại mật khẩu đã được gửi đến email của bạn",
         data: {
           total: null,
           pageCurrent: null,
@@ -548,7 +548,7 @@ const resetPasswordUser = async (data) => {
         //2
         resolve({
           status: "ERR",
-          message: "Invalid link or expired",
+          message: "Liên kết không tồn tại hoặc đã hết hạn",
           data: {
             total: null,
             pageCurrent: null,
@@ -571,7 +571,7 @@ const resetPasswordUser = async (data) => {
       if (!token)
         resolve({
           status: "ERR",
-          message: "Invalid link or expired",
+          message: "Liên kết không tồn tại hoặc đã hết hạn",
           data: {
             total: null,
             pageCurrent: null,
@@ -595,7 +595,7 @@ const resetPasswordUser = async (data) => {
       await token.delete(); //10
       resolve({
         status: "OK",
-        message: "password reset successfully.",
+        message: "Đặt lại mật khẩu Thành công",
         data: {
           total: null,
           pageCurrent: null,

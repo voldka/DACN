@@ -183,7 +183,7 @@ const createProduct = (newProduct) => {
       if (checkProduct !== null) {
         resolve({
           status: "ERR",
-          message: "The name of product is already",
+          message: "đã tồn tại sản phẩm trùng tên",
           data: {
             total: null,
             pageCurrent: null,
@@ -211,7 +211,7 @@ const createProduct = (newProduct) => {
       if (newProduct) {
         resolve({
           status: "OK",
-          message: "SUCCESS",
+          message: "Thành công",
           data: {
             total: null,
             pageCurrent: null,
@@ -241,7 +241,7 @@ const updateProduct = (id, data) => {
       if (checkProduct === null) {
         resolve({
           status: "ERR",
-          message: "The product is not defined",
+          message: "Không tìm thấy",
           data: {
             total: null,
             pageCurrent: null,
@@ -262,7 +262,7 @@ const updateProduct = (id, data) => {
       });
       resolve({
         status: "OK",
-        message: "SUCCESS",
+        message: "Thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -291,7 +291,7 @@ const deleteProduct = (id) => {
       if (checkProduct === null) {
         resolve({
           status: "ERR",
-          message: "The product is not defined",
+          message: "Không tìm thấy",
           data: {
             total: null,
             pageCurrent: null,
@@ -310,7 +310,7 @@ const deleteProduct = (id) => {
       await Product.findByIdAndDelete(id);
       resolve({
         status: "OK",
-        message: "Delete product success",
+        message: "Delete product Thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -336,7 +336,7 @@ const deleteManyProduct = (ids) => {
       await Product.deleteMany({ _id: ids });
       resolve({
         status: "OK",
-        message: "Delete product success",
+        message: "Delete product Thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -365,7 +365,7 @@ const getDetailsProduct = (id) => {
       if (product === null) {
         resolve({
           status: "ERR",
-          message: "The product is not defined",
+          message: "Không tìm thấy",
           data: {
             total: null,
             pageCurrent: null,
@@ -417,7 +417,7 @@ const getAllProduct = (limit, page, sort, filter) => {
           .sort({ createdAt: -1, updatedAt: -1 });
         resolve({
           status: "OK",
-          message: "Success",
+          message: "Thành công",
           data: {
             total: totalProduct,
             pageCurrent: Number(page + 1),
@@ -443,7 +443,7 @@ const getAllProduct = (limit, page, sort, filter) => {
           .sort({ createdAt: -1, updatedAt: -1 });
         resolve({
           status: "OK",
-          message: "Success",
+          message: "Thành công",
           data: {
             total: totalProduct,
             pageCurrent: Number(page + 1),
@@ -471,7 +471,7 @@ const getAllProduct = (limit, page, sort, filter) => {
       }
       resolve({
         status: "OK",
-        message: "Success",
+        message: "Thành công",
         data: {
           total: totalProduct,
           pageCurrent: Number(page + 1),
@@ -497,7 +497,7 @@ const getAllType = () => {
       const allType = await Product.distinct("type");
       resolve({
         status: "OK",
-        message: "Success",
+        message: "Thành công",
         data: {
           total: null,
           pageCurrent: null,

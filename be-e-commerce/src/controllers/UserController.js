@@ -105,6 +105,7 @@ const loginUser = async (req, res) => {
       return res
         .status(401)
         .json({ error: true, message: error.details[0].message });
+
     const response = await UserService.loginUser(req.body);
     const { refresh_token, ...newReponse } = response;
     res.cookie("refresh_token", refresh_token, {
@@ -113,6 +114,7 @@ const loginUser = async (req, res) => {
       sameSite: "strict",
       path: "/",
     });
+    
     if (response.status == "OK") {
       return res.status(200).json({ ...newReponse });
     } else {

@@ -47,7 +47,6 @@ const createProductSchemaBodyValidation = (body) => {
     type: Joi.string().required().label("type"),
     price: Joi.number().min(0).required().label("price"),
     countInStock: Joi.number().min(0).required().label("countInStock"),
-
     rating: Joi.number().min(0).max(5).label("rating"),
     description: Joi.string().label("description"),
     discount: Joi.number().min(0).max(99).label("discount"),

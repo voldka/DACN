@@ -36,7 +36,7 @@ const refreshTokenJwtService = (token) => {
           if (err) {
             resolve({
               status: "ERR",
-              message: "The authemtication",
+              message: "Lỗi Xác thực",
               data: {
                 total: null,
                 pageCurrent: null,
@@ -63,7 +63,7 @@ const refreshTokenJwtService = (token) => {
           }).save();
           resolve({
             status: "OK",
-            message: "SUCCESS",
+            message: "Thành công",
             data: {
               total: null,
               pageCurrent: null,

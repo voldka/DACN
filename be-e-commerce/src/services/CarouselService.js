@@ -10,7 +10,7 @@ const createCarousel = (newCarousel) => {
       if (checkCarousel !== null) {
         resolve({
           status: "ERR",
-          message: "The name of Carousel is already",
+          message: "Đã tồn tại giá trị trường name tương tự",
           data: {
             total: null,
             pageCurrent: null,
@@ -33,7 +33,7 @@ const createCarousel = (newCarousel) => {
       if (newCarousel) {
         resolve({
           status: "OK",
-          message: "SUCCESS",
+          message: "Thành công",
           data: {
             total: null,
             pageCurrent: null,
@@ -63,7 +63,7 @@ const updateCarousel = (id, data) => {
       if (checkCarousel === null) {
         resolve({
           status: "ERR",
-          message: "The Carousel is not defined",
+          message: "Không tìm thấy",
           data: {
             total: null,
             pageCurrent: null,
@@ -84,7 +84,7 @@ const updateCarousel = (id, data) => {
       });
       resolve({
         status: "OK",
-        message: "SUCCESS",
+        message: "Thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -113,7 +113,7 @@ const deleteCarousel = (id) => {
       if (checkCarousel === null) {
         resolve({
           status: "ERR",
-          message: "The Carousel is not defined",
+          message: "Không tìm thấy",
           data: {
             total: null,
             pageCurrent: null,
@@ -132,7 +132,7 @@ const deleteCarousel = (id) => {
       await CarouselModel.findByIdAndDelete(id);
       resolve({
         status: "OK",
-        message: "Delete Carousel success",
+        message: "Xóa thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -157,7 +157,7 @@ const deleteManyCarousel = (ids) => {
       await CarouselModel.deleteMany({ _id: ids });
       resolve({
         status: "OK",
-        message: "Delete Carousel success",
+        message: "Xóa thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -186,7 +186,7 @@ const getDetailsCarousel = (id) => {
       if (Carousel === null) {
         resolve({
           status: "ERR",
-          message: "The Carousel is not defined",
+          message: "Không tìm thấy",
           data: {
             total: null,
             pageCurrent: null,
@@ -203,7 +203,7 @@ const getDetailsCarousel = (id) => {
       }
       resolve({
         status: "OK",
-        message: "SUCCESS",
+        message: "Thành công",
         data: {
           total: null,
           pageCurrent: null,
@@ -238,7 +238,7 @@ const getAllCarousel = (limit, page, sort, filter) => {
           .sort({ createdAt: -1, updatedAt: -1 });
         resolve({
           status: "OK",
-          message: "SUCCESS",
+          message: "Thành công",
           data: {
             total: totalCarousel,
             pageCurrent: Number(page + 1),
@@ -263,7 +263,7 @@ const getAllCarousel = (limit, page, sort, filter) => {
           .sort({ createdAt: -1, updatedAt: -1 });
         resolve({
           status: "OK",
-          message: "SUCCESS",
+          message: "Thành công",
           data: {
             total: totalCarousel,
             pageCurrent: Number(page + 1),
@@ -291,7 +291,7 @@ const getAllCarousel = (limit, page, sort, filter) => {
       }
       resolve({
         status: "OK",
-        message: "SUCCESS",
+        message: "Thành công",
         data: {
           total: totalCarousel,
           pageCurrent: Number(page + 1),
@@ -317,7 +317,7 @@ const getAllCarousel = (limit, page, sort, filter) => {
 //         const allType = await CarouselModel.distinct("type");
 //         resolve({
 //           status: "OK",
-//           message: "Success",
+//           message: "Thành công",
 //           data: allType,
 //         });
 //       } catch (e) {
