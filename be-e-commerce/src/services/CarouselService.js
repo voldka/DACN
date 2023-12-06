@@ -1,4 +1,4 @@
-const CarouselModel = require("../models/CarouselModel");
+const CarouselModel = require('../models/CarouselModel');
 
 const createCarousel = (newCarousel) => {
   return new Promise(async (resolve, reject) => {
@@ -9,8 +9,8 @@ const createCarousel = (newCarousel) => {
       });
       if (checkCarousel !== null) {
         resolve({
-          status: "ERR",
-          message: "Đã tồn tại giá trị trường name tương tự",
+          status: 'ERR',
+          message: 'Đã tồn tại giá trị trường name tương tự',
           data: {
             total: null,
             pageCurrent: null,
@@ -32,8 +32,8 @@ const createCarousel = (newCarousel) => {
       });
       if (newCarousel) {
         resolve({
-          status: "OK",
-          message: "Thành công",
+          status: 'OK',
+          message: 'Thành công',
           data: {
             total: null,
             pageCurrent: null,
@@ -62,8 +62,8 @@ const updateCarousel = (id, data) => {
       });
       if (checkCarousel === null) {
         resolve({
-          status: "ERR",
-          message: "Không tìm thấy",
+          status: 'ERR',
+          message: 'Không tìm thấy',
           data: {
             total: null,
             pageCurrent: null,
@@ -83,8 +83,8 @@ const updateCarousel = (id, data) => {
         new: true,
       });
       resolve({
-        status: "OK",
-        message: "Thành công",
+        status: 'OK',
+        message: 'Thành công',
         data: {
           total: null,
           pageCurrent: null,
@@ -112,8 +112,8 @@ const deleteCarousel = (id) => {
       });
       if (checkCarousel === null) {
         resolve({
-          status: "ERR",
-          message: "Không tìm thấy",
+          status: 'ERR',
+          message: 'Không tìm thấy',
           data: {
             total: null,
             pageCurrent: null,
@@ -131,8 +131,8 @@ const deleteCarousel = (id) => {
 
       await CarouselModel.findByIdAndDelete(id);
       resolve({
-        status: "OK",
-        message: "Xóa thành công",
+        status: 'OK',
+        message: 'Xóa thành công',
         data: {
           total: null,
           pageCurrent: null,
@@ -156,8 +156,8 @@ const deleteManyCarousel = (ids) => {
     try {
       await CarouselModel.deleteMany({ _id: ids });
       resolve({
-        status: "OK",
-        message: "Xóa thành công",
+        status: 'OK',
+        message: 'Xóa thành công',
         data: {
           total: null,
           pageCurrent: null,
@@ -185,8 +185,8 @@ const getDetailsCarousel = (id) => {
       });
       if (Carousel === null) {
         resolve({
-          status: "ERR",
-          message: "Không tìm thấy",
+          status: 'ERR',
+          message: 'Không tìm thấy',
           data: {
             total: null,
             pageCurrent: null,
@@ -202,8 +202,8 @@ const getDetailsCarousel = (id) => {
         });
       }
       resolve({
-        status: "OK",
-        message: "Thành công",
+        status: 'OK',
+        message: 'Thành công',
         data: {
           total: null,
           pageCurrent: null,
@@ -237,8 +237,8 @@ const getAllCarousel = (limit, page, sort, filter) => {
           .skip(page * limit)
           .sort({ createdAt: -1, updatedAt: -1 });
         resolve({
-          status: "OK",
-          message: "Thành công",
+          status: 'OK',
+          message: 'Thành công',
           data: {
             total: totalCarousel,
             pageCurrent: Number(page + 1),
@@ -262,8 +262,8 @@ const getAllCarousel = (limit, page, sort, filter) => {
           .sort(objectSort)
           .sort({ createdAt: -1, updatedAt: -1 });
         resolve({
-          status: "OK",
-          message: "Thành công",
+          status: 'OK',
+          message: 'Thành công',
           data: {
             total: totalCarousel,
             pageCurrent: Number(page + 1),
@@ -290,8 +290,8 @@ const getAllCarousel = (limit, page, sort, filter) => {
           .sort({ createdAt: -1, updatedAt: -1 });
       }
       resolve({
-        status: "OK",
-        message: "Thành công",
+        status: 'OK',
+        message: 'Thành công',
         data: {
           total: totalCarousel,
           pageCurrent: Number(page + 1),

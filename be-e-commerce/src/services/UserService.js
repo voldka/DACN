@@ -1,12 +1,10 @@
-const User = require("../models/UserModel");
-const bcrypt = require("bcrypt");
-const crypto = require("crypto");
-const sendEmail = require("../utils/SendEmail.js");
-const RefreshToken = require("../models/RefreshToken");
-const { genneralAccessToken, genneralRefreshToken } = require("./JwtService");
-const { resolve } = require("path");
-const { rejects } = require("assert");
-const AccessToken = require("../models/AccessToken");
+const User = require('../models/UserModel');
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const sendEmail = require('../utils/SendEmail.js');
+const RefreshToken = require('../models/RefreshToken');
+const { generateAccessToken, generateRefreshToken } = require('./JwtService');
+const AccessToken = require('../models/AccessToken');
 
 //ok
 const createUser = (newUser) => {
@@ -18,8 +16,8 @@ const createUser = (newUser) => {
       });
       if (checkUser !== null) {
         resolve({
-          status: "ERR",
-          message: "The email is already",
+          status: 'ERR',
+          message: 'The email is already',
           data: {
             total: null,
             pageCurrent: null,
@@ -44,8 +42,8 @@ const createUser = (newUser) => {
       });
       if (createdUser) {
         resolve({
-          status: "OK",
-          message: "CREATE Thành công",
+          status: 'OK',
+          message: 'CREATE Thành công',
           data: {
             total: null,
             pageCurrent: null,
@@ -66,84 +64,55 @@ const createUser = (newUser) => {
   });
 };
 
-const loginUser = (userLogin) => {
+const loginUser = async (userLogin) => {
+  const { email, password } = userLogin;
   return new Promise(async (resolve, reject) => {
-    const { email, password } = userLogin;
-
     try {
-      const checkUser = await User.findOne({
-        email: email,
-      });
-      if (checkUser === null) {
-        resolve({
-          status: "ERR",
-          message: "Không tìm thấy",
-          data: {
-            total: null,
-            pageCurrent: null,
-            totalPage: null,
-            userData: checkUser,
-            productData: null,
-            orderData: null,
-            carouselData: null,
-            commentData: null,
-          },
-          access_token: null,
-          refresh_token: null,
+      const checkUser = await User.findOne({ email });
+      if (!checkUser) {
+        return reject({
+          statusCode: 404,
+          status: 'error',
+          message: 'Email hoặc mật khẩu không chính xác',
         });
       }
 
       const comparePassword = bcrypt.compareSync(password, checkUser.password);
       if (!comparePassword) {
-        resolve({
-          status: "ERR",
-          message: "Mật khẩu không chính xác",
-          data: {
-            total: null,
-            pageCurrent: null,
-            totalPage: null,
-            userData: null,
-            productData: null,
-            orderData: null,
-            carouselData: null,
-            commentData: null,
-          },
-          access_token: null,
-          refresh_token: null,
+        return reject({
+          statusCode: 404,
+          status: 'error',
+          message: 'Email hoặc mật khẩu không chính xác',
         });
       }
 
-      const access_token = await genneralAccessToken({
-        id: checkUser.id,
+      const accessToken = await generateAccessToken({
+        id: checkUser._id,
         isAdmin: checkUser.isAdmin,
       });
-      const refresh_token = await genneralRefreshToken({
-        id: checkUser.id,
+      const refreshToken = await generateRefreshToken({
+        id: checkUser._id,
         isAdmin: checkUser.isAdmin,
       });
 
-      let id = checkUser._id;
-      await RefreshToken.find({ userId: id }).deleteMany().exec();
+      await RefreshToken.find({ userId: checkUser._id }).deleteMany().exec();
+      await RefreshToken.create({ userId: checkUser._id, token: refreshToken });
 
-      let rs = new RefreshToken({
-        userId: checkUser._id,
-        token: refresh_token,
-      }).save();
       resolve({
-        status: "OK",
-        message: "Thành công",
+        status: 'OK',
+        message: 'Thành công',
+        statusCode: 200,
         data: {
-          total: null,
-          pageCurrent: null,
-          totalPage: null,
-          userData: { id: checkUser.id },
-          productData: null,
-          orderData: null,
-          carouselData: null,
-          commentData: null,
+          id: checkUser._id,
+          name: checkUser.name,
+          city: checkUser.city,
+          email: checkUser.email,
+          phone: checkUser.phone,
+          avatar: checkUser.avatar,
+          access_token: accessToken,
+          address: checkUser.address,
+          isAdmin: checkUser.isAdmin,
         },
-        access_token: access_token,
-        refresh_token: refresh_token,
       });
     } catch (e) {
       reject(e);
@@ -158,8 +127,8 @@ const logoutUser = async (id) => {
       });
       if (checkUser === null) {
         resolve({
-          status: "ERR",
-          message: "Đã đăng xuất",
+          status: 'ERR',
+          message: 'Đã đăng xuất',
           data: {
             total: null,
             pageCurrent: null,
@@ -176,8 +145,8 @@ const logoutUser = async (id) => {
       }
       await RefreshToken.find({ userId: id }).deleteMany().exec();
       resolve({
-        status: "OK",
-        message: "Thành công",
+        status: 'OK',
+        message: 'Thành công',
         data: {
           total: null,
           pageCurrent: null,
@@ -204,8 +173,8 @@ const updateUser = (id, data) => {
       });
       if (checkUser === null) {
         resolve({
-          status: "ERR",
-          message: "Không tìm thấy",
+          status: 'ERR',
+          message: 'Không tìm thấy',
           data: {
             total: null,
             pageCurrent: null,
@@ -223,8 +192,8 @@ const updateUser = (id, data) => {
 
       const updatedUser = await User.findByIdAndUpdate(id, data, { new: true });
       resolve({
-        status: "OK",
-        message: "Thành công",
+        status: 'OK',
+        message: 'Thành công',
         data: {
           total: null,
           pageCurrent: null,
@@ -252,8 +221,8 @@ const deleteUser = (id) => {
       });
       if (checkUser === null) {
         resolve({
-          status: "ERR",
-          message: "Không tìm thấy",
+          status: 'ERR',
+          message: 'Không tìm thấy',
           data: {
             total: null,
             pageCurrent: null,
@@ -271,8 +240,8 @@ const deleteUser = (id) => {
 
       await User.findByIdAndDelete(id);
       resolve({
-        status: "OK",
-        message: "Thành công",
+        status: 'OK',
+        message: 'Thành công',
         data: {
           total: null,
           pageCurrent: null,
@@ -297,8 +266,8 @@ const deleteManyUser = (ids) => {
     try {
       await User.deleteMany({ _id: ids });
       resolve({
-        status: "OK",
-        message: "Thành công",
+        status: 'OK',
+        message: 'Thành công',
         data: {
           total: null,
           pageCurrent: null,
@@ -323,8 +292,8 @@ const getAllUser = () => {
     try {
       const allUser = await User.find().sort({ createdAt: -1, updatedAt: -1 });
       resolve({
-        status: "OK",
-        message: "Thành công",
+        status: 'OK',
+        message: 'Thành công',
         data: {
           total: null,
           pageCurrent: null,
@@ -352,8 +321,8 @@ const getDetailsUser = (id) => {
       });
       if (user === null) {
         resolve({
-          status: "ERR",
-          message: "Không tìm thấy",
+          status: 'ERR',
+          message: 'Không tìm thấy',
           data: {
             total: null,
             pageCurrent: null,
@@ -369,8 +338,8 @@ const getDetailsUser = (id) => {
         });
       }
       resolve({
-        status: "OK",
-        message: "Thành công",
+        status: 'OK',
+        message: 'Thành công',
         data: {
           total: null,
           pageCurrent: null,
@@ -399,8 +368,8 @@ const changePasswordUser = async (data) => {
       });
       if (checkUser === null) {
         resolve({
-          status: "ERR",
-          message: "Không tìm thấy",
+          status: 'ERR',
+          message: 'Không tìm thấy',
           data: {
             total: null,
             pageCurrent: null,
@@ -416,15 +385,12 @@ const changePasswordUser = async (data) => {
         });
       }
 
-      const comparePassword = bcrypt.compareSync(
-        oldPassword,
-        checkUser.password
-      );
+      const comparePassword = bcrypt.compareSync(oldPassword, checkUser.password);
 
       if (!comparePassword) {
         resolve({
-          status: "ERR",
-          message: "Mật khẩu không chính xác",
+          status: 'ERR',
+          message: 'Mật khẩu không chính xác',
           data: {
             total: null,
             pageCurrent: null,
@@ -454,8 +420,8 @@ const changePasswordUser = async (data) => {
 
         if (rs) {
           resolve({
-            status: "OK",
-            message: "Cập nhật Thành công",
+            status: 'OK',
+            message: 'Cập nhật Thành công',
             data: {
               total: null,
               pageCurrent: null,
@@ -483,8 +449,8 @@ const forgotPasswordUser = (data) => {
       if (!user) {
         //2
         resolve({
-          status: "ERR",
-          message: "Email của tài khoản không tồn tại",
+          status: 'ERR',
+          message: 'Email của tài khoản không tồn tại',
           data: {
             total: null,
             pageCurrent: null,
@@ -514,14 +480,10 @@ const forgotPasswordUser = (data) => {
       }
 
       const link = `${process.env.BASE_URL}/api/user/password-reset/${user._id}/${token.token}`; //8
-      await sendEmail.sendResetPasswordEmail(
-        user.email,
-        "Password reset",
-        link
-      ); //9
+      await sendEmail.sendResetPasswordEmail(user.email, 'Password reset', link); //9
       resolve({
-        status: "OK",
-        message: "Liên kết đặt lại mật khẩu đã được gửi đến email của bạn",
+        status: 'OK',
+        message: 'Liên kết đặt lại mật khẩu đã được gửi đến email của bạn',
         data: {
           total: null,
           pageCurrent: null,
@@ -547,8 +509,8 @@ const resetPasswordUser = async (data) => {
       if (!user)
         //2
         resolve({
-          status: "ERR",
-          message: "Liên kết không tồn tại hoặc đã hết hạn",
+          status: 'ERR',
+          message: 'Liên kết không tồn tại hoặc đã hết hạn',
           data: {
             total: null,
             pageCurrent: null,
@@ -570,8 +532,8 @@ const resetPasswordUser = async (data) => {
       });
       if (!token)
         resolve({
-          status: "ERR",
-          message: "Liên kết không tồn tại hoặc đã hết hạn",
+          status: 'ERR',
+          message: 'Liên kết không tồn tại hoặc đã hết hạn',
           data: {
             total: null,
             pageCurrent: null,
@@ -594,8 +556,8 @@ const resetPasswordUser = async (data) => {
       await user.save(); //9
       await token.delete(); //10
       resolve({
-        status: "OK",
-        message: "Đặt lại mật khẩu Thành công",
+        status: 'OK',
+        message: 'Đặt lại mật khẩu Thành công',
         data: {
           total: null,
           pageCurrent: null,

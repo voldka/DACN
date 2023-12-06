@@ -1,17 +1,12 @@
-const UserService = require("../services/UserService");
-const JwtService = require("../services/JwtService");
-const validationSchema = require("../utils/validationSchema");
-const User = require("../models/UserModel");
+const UserService = require('../services/UserService');
+const JwtService = require('../services/JwtService');
+const validationSchema = require('../utils/validationSchema');
+const User = require('../models/UserModel');
 
 const resetPasswordUser = async (req, res) => {
   try {
-    const { error } = validationSchema.resetPasswordSchemaBodyValidation(
-      req.body
-    );
-    if (error)
-      return res
-        .status(401)
-        .json({ error: true, message: error.details[0].message });
+    const { error } = validationSchema.resetPasswordSchemaBodyValidation(req.body);
+    if (error) return res.status(401).json({ error: true, message: error.details[0].message });
     //chua bat loi
     let data = {
       userId: req.params.userId,
@@ -21,7 +16,7 @@ const resetPasswordUser = async (req, res) => {
 
     const response = await UserService.resetPasswordUser(data);
 
-    if (response.status == "OK") {
+    if (response.status == 'OK') {
       return res.status(200).json(response);
     } else {
       return res.status(401).json(response);
@@ -34,16 +29,11 @@ const resetPasswordUser = async (req, res) => {
 };
 const forgotPasswordUser = async (req, res) => {
   try {
-    const { error } = validationSchema.forgotPassworSchemaBodyValidation(
-      req.body
-    );
-    if (error)
-      return res
-        .status(401)
-        .json({ error: true, message: error.details[0].message });
+    const { error } = validationSchema.forgotPassworSchemaBodyValidation(req.body);
+    if (error) return res.status(401).json({ error: true, message: error.details[0].message });
 
     const response = await UserService.forgotPasswordUser(req.body);
-    if (response.status == "OK") {
+    if (response.status == 'OK') {
       return res.status(200).json(response);
     } else {
       return res.status(401).json(response);
@@ -56,16 +46,11 @@ const forgotPasswordUser = async (req, res) => {
 };
 const changePasswordUser = async (req, res) => {
   try {
-    const { error } = validationSchema.changePasswordSchemaBodyValidation(
-      req.body
-    );
-    if (error)
-      return res
-        .status(401)
-        .json({ error: true, message: error.details[0].message });
+    const { error } = validationSchema.changePasswordSchemaBodyValidation(req.body);
+    if (error) return res.status(401).json({ error: true, message: error.details[0].message });
 
     const response = await UserService.changePasswordUser(req.body);
-    if (response.status == "OK") {
+    if (response.status == 'OK') {
       return res.status(200).json(response);
     } else {
       return res.status(401).json(response);
@@ -80,13 +65,10 @@ const changePasswordUser = async (req, res) => {
 const createUser = async (req, res) => {
   try {
     const { error } = validationSchema.signUpBodyValidation(req.body);
-    if (error)
-      return res
-        .status(401)
-        .json({ error: true, message: error.details[0].message });
+    if (error) return res.status(401).json({ error: true, message: error.details[0].message });
 
     const response = await UserService.createUser(req.body);
-    if (response.status == "OK") {
+    if (response.status == 'OK') {
       return res.status(200).json(response);
     } else {
       return res.status(401).json(response);
@@ -101,29 +83,29 @@ const createUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { error } = validationSchema.logInBodyValidation(req.body);
-    if (error)
-      return res
-        .status(401)
-        .json({ error: true, message: error.details[0].message });
+    if (error) {
+      return res.status(400).json({
+        status: 'error',
+        message: error.details[0].message,
+      });
+    }
 
     const response = await UserService.loginUser(req.body);
-    const { refresh_token, ...newReponse } = response;
-    res.cookie("refresh_token", refresh_token, {
+    const { refresh_token, ...results } = response;
+    res.cookie('refresh_token', refresh_token, {
       httpOnly: true,
       secure: false,
-      sameSite: "strict",
-      path: "/",
+      sameSite: 'strict',
+      path: '/',
     });
-    
-    if (response.status == "OK") {
-      return res.status(200).json({ ...newReponse });
+
+    if (response.status == 'OK') {
+      return res.status(200).json({ ...results });
     } else {
       return res.status(401).json(response);
     }
   } catch (e) {
-    return res.status(401).json({
-      message: e,
-    });
+    return res.status(e.statusCode || 500).json({ ...e });
   }
 };
 
@@ -132,11 +114,11 @@ const updateUser = async (req, res) => {
     const userId = req.params.userId;
     if (!userId) {
       return res.status(200).json({
-        status: "ERR",
-        message: "The userId is required",
+        status: 'ERR',
+        message: 'The userId is required',
       });
     }
-    
+
     const imagePath = process.env.BASE_URL + '/uploads/users/' + req.file.filename;
     const data = {
       ...req.body, // Copy all properties from req.body
@@ -148,14 +130,11 @@ const updateUser = async (req, res) => {
     };
 
     const { error } = validationSchema.updateProfileBodyValidation(data);
-    if (error)
-      return res
-        .status(300)
-        .json({ error: true, message: error.details[0].message });
+    if (error) return res.status(300).json({ error: true, message: error.details[0].message });
 
     const response = await UserService.updateUser(userId, data);
-    
-    if (response.status == "OK") {
+
+    if (response.status == 'OK') {
       return res.status(200).json(response);
     } else {
       return res.status(401).json(response);
@@ -172,12 +151,12 @@ const deleteUser = async (req, res) => {
     const userId = req.params.userId;
     if (!userId) {
       return res.status(200).json({
-        status: "ERR",
-        message: "The userId is required",
+        status: 'ERR',
+        message: 'The userId is required',
       });
     }
     const response = await UserService.deleteUser(userId);
-    if (response.status == "OK") {
+    if (response.status == 'OK') {
       return res.status(200).json(response);
     } else {
       return res.status(401).json(response);
@@ -194,12 +173,12 @@ const deleteMany = async (req, res) => {
     const ids = req.body.ids;
     if (!ids) {
       return res.status(200).json({
-        status: "ERR",
-        message: "The ids is required",
+        status: 'ERR',
+        message: 'The ids is required',
       });
     }
     const response = await UserService.deleteManyUser(ids);
-    if (response.status == "OK") {
+    if (response.status == 'OK') {
       return res.status(200).json(response);
     } else {
       return res.status(401).json(response);
@@ -214,7 +193,7 @@ const deleteMany = async (req, res) => {
 const getAllUser = async (req, res) => {
   try {
     const response = await UserService.getAllUser();
-    if (response.status == "OK") {
+    if (response.status == 'OK') {
       return res.status(200).json(response);
     } else {
       return res.status(401).json(response);
@@ -231,12 +210,12 @@ const getDetailsUser = async (req, res) => {
     const userId = req.params.userId;
     if (!userId) {
       return res.status(200).json({
-        status: "ERR",
-        message: "The userId is required",
+        status: 'ERR',
+        message: 'The userId is required',
       });
     }
     const response = await UserService.getDetailsUser(userId);
-    if (response.status == "OK") {
+    if (response.status == 'OK') {
       return res.status(200).json(response);
     } else {
       return res.status(401).json(response);
@@ -254,21 +233,20 @@ const refreshToken = async (req, res) => {
     // let token = req.headers.token.split(" ")[1];
     if (!refreshToken) {
       return res.status(401).json({
-        status: "ERR",
-        message: "The Refresh Token is required",
+        status: 'ERR',
+        message: 'The Refresh Token is required',
       });
     }
-    const { refresh_token, ...response } =
-      await JwtService.refreshTokenJwtService(refreshToken);
+    const { refresh_token, ...response } = await JwtService.refreshTokenJwtService(refreshToken);
 
-    res.cookie("refresh_token", refresh_token, {
+    res.cookie('refresh_token', refresh_token, {
       httpOnly: true,
       secure: false,
-      sameSite: "strict",
-      path: "/",
+      sameSite: 'strict',
+      path: '/',
     });
 
-    if (response.status == "OK") {
+    if (response.status == 'OK') {
       return res.status(200).json(response);
     } else {
       return res.status(401).json(response);
@@ -286,21 +264,21 @@ const logoutUser = async (req, res) => {
       const userId = req.params.userId;
       if (!userId) {
         return res.status(200).json({
-          status: "ERR",  
-          message: "The userId is required",
+          status: 'ERR',
+          message: 'The userId is required',
         });
       }
       const response = await UserService.logoutUser(userId);
-      if (response.status == "OK") {
-        res.clearCookie("refresh_token");
+      if (response.status == 'OK') {
+        res.clearCookie('refresh_token');
         return res.status(200).json(response);
       } else {
         return res.status(401).json(response);
       }
     } else {
       return res.status(200).json({
-        status: "OK",
-        message: "dont have refresh_token",
+        status: 'OK',
+        message: 'dont have refresh_token',
       });
     }
   } catch (e) {

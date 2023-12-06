@@ -1,4 +1,4 @@
-const CommentModel = require("../models/CommentModel");
+const CommentModel = require('../models/CommentModel');
 
 const createComment = (data) => {
   return new Promise(async (resolve, reject) => {
@@ -13,8 +13,8 @@ const createComment = (data) => {
       let rs = newComment.save();
       if (rs) {
         resolve({
-          status: "OK",
-          message: "Thành công",
+          status: 'OK',
+          message: 'Thành công',
           data: {
             total: null,
             pageCurrent: null,
@@ -43,8 +43,8 @@ const updateComment = (id, data) => {
       });
       if (checkComment === null) {
         resolve({
-          status: "ERR",
-          message: "Không tìm thấy",
+          status: 'ERR',
+          message: 'Không tìm thấy',
           data: {
             total: null,
             pageCurrent: null,
@@ -60,8 +60,8 @@ const updateComment = (id, data) => {
         });
       } else if (checkComment.user != data?.user) {
         resolve({
-          status: "ERR",
-          message: "Không thế sửa đổi bình luận của người khác",
+          status: 'ERR',
+          message: 'Không thế sửa đổi bình luận của người khác',
           data: {
             total: null,
             pageCurrent: null,
@@ -80,8 +80,8 @@ const updateComment = (id, data) => {
         new: true,
       });
       resolve({
-        status: "OK",
-        message: "Thành công",
+        status: 'OK',
+        message: 'Thành công',
         data: {
           total: null,
           pageCurrent: null,
@@ -108,8 +108,8 @@ const deleteComment = (commentId, userId) => {
       });
       if (checkComment === null) {
         resolve({
-          status: "ERR",
-          message: "Không tìm thấy",
+          status: 'ERR',
+          message: 'Không tìm thấy',
           data: {
             total: null,
             pageCurrent: null,
@@ -125,8 +125,8 @@ const deleteComment = (commentId, userId) => {
         });
       } else if (checkComment.user != userId) {
         resolve({
-          status: "ERR",
-          message: "Không thể xóa bình luận của người khác",
+          status: 'ERR',
+          message: 'Không thể xóa bình luận của người khác',
           data: {
             total: null,
             pageCurrent: null,
@@ -144,8 +144,8 @@ const deleteComment = (commentId, userId) => {
 
       await CommentModel.findByIdAndDelete(commentId);
       resolve({
-        status: "OK",
-        message: "Xóa thành công",
+        status: 'OK',
+        message: 'Xóa thành công',
         data: {
           total: null,
           pageCurrent: null,
@@ -178,8 +178,8 @@ const getCommentsOfProduct = (id, limit, page, sort, filter) => {
           .skip(page * limit)
           .sort({ createdAt: -1, updatedAt: -1 });
         resolve({
-          status: "OK",
-          message: "Thành công",
+          status: 'OK',
+          message: 'Thành công',
           data: {
             total: totalComments,
             pageCurrent: Number(page + 1),
@@ -203,8 +203,8 @@ const getCommentsOfProduct = (id, limit, page, sort, filter) => {
           .sort(objectSort)
           .sort({ createdAt: -1, updatedAt: -1 });
         resolve({
-          status: "OK",
-          message: "Thành công",
+          status: 'OK',
+          message: 'Thành công',
           data: {
             total: totalComments,
             pageCurrent: Number(page + 1),
@@ -232,8 +232,8 @@ const getCommentsOfProduct = (id, limit, page, sort, filter) => {
           .sort({ createdAt: -1, updatedAt: -1 });
       }
       resolve({
-        status: "OK",
-        message: "Thành công",
+        status: 'OK',
+        message: 'Thành công',
         data: {
           total: totalComments,
           pageCurrent: Number(page + 1),
@@ -269,8 +269,8 @@ const getCommentOfUser = (id, limit, page, sort, filter) => {
           .skip(page * limit)
           .sort({ createdAt: -1, updatedAt: -1 });
         resolve({
-          status: "OK",
-          message: "Thành công",
+          status: 'OK',
+          message: 'Thành công',
           data: {
             total: totalComments,
             pageCurrent: Number(page + 1),
@@ -280,7 +280,7 @@ const getCommentOfUser = (id, limit, page, sort, filter) => {
             productData: null,
             orderData: null,
             carouselData: null,
-            commentData: allObjectFilter
+            commentData: allObjectFilter,
           },
           access_token: null,
           refresh_token: null,
@@ -295,8 +295,8 @@ const getCommentOfUser = (id, limit, page, sort, filter) => {
           .sort(objectSort)
           .sort({ createdAt: -1, updatedAt: -1 });
         resolve({
-          status: "OK",
-          message: "Thành công",
+          status: 'OK',
+          message: 'Thành công',
           data: {
             total: totalComments,
             pageCurrent: Number(page + 1),
@@ -305,7 +305,7 @@ const getCommentOfUser = (id, limit, page, sort, filter) => {
             productData: null,
             orderData: null,
             carouselData: null,
-            commentData:allCommentSort,
+            commentData: allCommentSort,
           },
           access_token: null,
           refresh_token: null,
@@ -323,8 +323,8 @@ const getCommentOfUser = (id, limit, page, sort, filter) => {
           .sort({ createdAt: -1, updatedAt: -1 });
       }
       resolve({
-        status: "OK",
-        message: "Thành công",
+        status: 'OK',
+        message: 'Thành công',
         data: {
           total: totalComments,
           pageCurrent: Number(page + 1),
@@ -332,7 +332,7 @@ const getCommentOfUser = (id, limit, page, sort, filter) => {
           userData: null,
           productData: null,
           carouselData: null,
-          orderData:null,
+          orderData: null,
           commentData: allComments,
         },
         access_token: null,

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const AccessTokenSchema = new Schema({
@@ -17,5 +17,5 @@ const AccessTokenSchema = new Schema({
   },
 });
 
-const AccessToken = mongoose.model("Access Tokens", AccessTokenSchema);
+const AccessToken = mongoose.model('Access Tokens', AccessTokenSchema);
 module.exports = AccessToken;

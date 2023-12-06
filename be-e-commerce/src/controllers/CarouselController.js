@@ -1,11 +1,10 @@
-const CarouselService = require("../services/CarouselService");
-const validationSchema = require("../utils/validationSchema");
-
+const CarouselService = require('../services/CarouselService');
+const validationSchema = require('../utils/validationSchema');
 
 const createCarousel = async (req, res) => {
   try {
     const newImages = req.files.map(
-      (file) => process.env.BASE_URL + "/uploads/carousel/" + file.filename.replace(/\s/g, "")
+      (file) => process.env.BASE_URL + '/uploads/carousel/' + file.filename.replace(/\s/g, ''),
     );
 
     let images = new Array();
@@ -14,26 +13,11 @@ const createCarousel = async (req, res) => {
     const data = {
       ...req.body, // Copy all properties from req.body
       image: images,
-      //  {
-      //   // data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
-      //   // contentType: "image/png",
-      // },
     };
-    const { error } = validationSchema.createCarouselSchemaBodyValidation(
-      data
-    );
-    if (error)
-      return res
-        .status(401)
-        .json({ error: true, message: error.details[0].message });
-
-    // const obj = {
-    //   ...req.body, // Copy all properties from req.body
-    //   image: {
-    //     data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
-    //     contentType: "image/png",
-    //   },
-    // };
+    const { error } = validationSchema.createCarouselSchemaBodyValidation(data);
+    if (error) {
+      return res.status(400).json({ error: true, message: error.details[0].message });
+    }
 
     const response = await CarouselService.createCarousel(data);
     return res.status(200).json(response);
@@ -49,12 +33,12 @@ const updateCarousel = async (req, res) => {
     const CarouselId = req.params.CarouselId;
     if (!CarouselId) {
       return res.status(200).json({
-        status: "ERR",
-        message: "The CarouselId is required",
+        status: 'ERR',
+        message: 'The CarouselId is required',
       });
     }
     const newImages = req.files.map(
-      (file) => process.env.BASE_URL + "/uploads/carousel/" + file.filename.replace(/\s/g, "")
+      (file) => process.env.BASE_URL + '/uploads/carousel/' + file.filename.replace(/\s/g, ''),
     );
 
     let images = new Array();
@@ -62,27 +46,11 @@ const updateCarousel = async (req, res) => {
 
     const data = {
       ...req.body, // Copy all properties from req.body
-      image: images,
-      //  {
-      //   // data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
-      //   // contentType: "image/png",
-      // },
     };
-    const { error } = validationSchema.createCarouselSchemaBodyValidation(
-      data
-    );
-    if (error)
-      return res
-        .status(401)
-        .json({ error: true, message: error.details[0].message });
-
-    // const obj = {
-    //   ...req.body, // Copy all properties from req.body
-    //   image: {
-    //     data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
-    //     contentType: "image/png",
-    //   },
-    // };
+    const { error } = validationSchema.createCarouselSchemaBodyValidation(data);
+    if (error) {
+      return res.status(401).json({ error: true, message: error.details[0].message });
+    }
 
     const response = await CarouselService.updateCarousel(CarouselId, req.body);
     return res.status(200).json(response);
@@ -98,8 +66,8 @@ const getDetailsCarousel = async (req, res) => {
     const CarouselId = req.params.CarouselId;
     if (!CarouselId) {
       return res.status(200).json({
-        status: "ERR",
-        message: "The CarouselId is required",
+        status: 'ERR',
+        message: 'The CarouselId is required',
       });
     }
     const response = await CarouselService.getDetailsCarousel(CarouselId);
@@ -116,8 +84,8 @@ const deleteCarousel = async (req, res) => {
     const CarouselId = req.params.CarouselId;
     if (!CarouselId) {
       return res.status(200).json({
-        status: "ERR",
-        message: "The CarouselId is required",
+        status: 'ERR',
+        message: 'The CarouselId is required',
       });
     }
     const response = await CarouselService.deleteCarousel(CarouselId);
@@ -133,9 +101,9 @@ const deleteMany = async (req, res) => {
   try {
     const ids = req.body.ids;
     if (!ids) {
-      return res.status(200).json({
-        status: "ERR",
-        message: "The ids is required",
+      return res.status(400).json({
+        status: 'ERR',
+        message: 'The ids is required',
       });
     }
     const response = await CarouselService.deleteManyCarousel(ids);
@@ -154,7 +122,7 @@ const getAllCarousel = async (req, res) => {
       Number(limit) || null,
       Number(page) || 0,
       sort,
-      filter
+      filter,
     );
     return res.status(200).json(response);
   } catch (e) {
@@ -164,17 +132,6 @@ const getAllCarousel = async (req, res) => {
   }
 };
 
-// const getAllType = async (req, res) => {
-//   try {
-//     const response = await CarouselService.getAllType();
-//     return res.status(200).json(response);
-//   } catch (e) {
-//     return res.status(404).json({
-//       message: e,
-//     });
-//   }
-// };
-
 module.exports = {
   createCarousel,
   updateCarousel,
@@ -182,6 +139,4 @@ module.exports = {
   deleteCarousel,
   getAllCarousel,
   deleteMany,
-  // getAllType,
-  // upload,
 };
