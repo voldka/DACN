@@ -1,63 +1,63 @@
-const User = require('../models/UserModel');
 const bcrypt = require('bcrypt');
-const crypto = require('crypto');
+const User = require('../models/UserModel');
 const sendEmail = require('../utils/SendEmail.js');
+const AccessToken = require('../models/AccessToken');
 const RefreshToken = require('../models/RefreshToken');
 const { generateAccessToken, generateRefreshToken } = require('./JwtService');
-const AccessToken = require('../models/AccessToken');
+const generateRandomPassword = require('../utils/generatePassword.js');
 
-//ok
-const createUser = (newUser) => {
+const createUser = (payload) => {
   return new Promise(async (resolve, reject) => {
-    const { name, email, password } = newUser;
     try {
       const checkUser = await User.findOne({
-        email: email,
+        email: payload.email,
       });
-      if (checkUser !== null) {
-        resolve({
-          status: 'ERR',
-          message: 'The email is already',
-          data: {
-            total: null,
-            pageCurrent: null,
-            totalPage: null,
-            userData: null,
-            productData: null,
-            orderData: null,
-            carouselData: null,
-            commentData: null,
-          },
-          access_token: null,
-          refresh_token: null,
+      if (checkUser) {
+        return reject({
+          status: 'error',
+          statusCode: 400,
+          message: 'Email đã có người khác sử dụng. Vui lòng sử dụng email khác',
         });
       }
       const salt = await bcrypt.genSalt(Number(process.env.SALT));
-      const hash = await bcrypt.hash(password, salt);
+      const hash = await bcrypt.hash(payload.password, salt);
 
       const createdUser = await User.create({
-        name,
-        email,
+        name: payload.name,
+        email: payload.email,
         password: hash,
+        phone: payload.phone,
+        address: payload.address,
       });
-      if (createdUser) {
-        resolve({
-          status: 'OK',
-          message: 'CREATE Thành công',
-          data: {
-            total: null,
-            pageCurrent: null,
-            totalPage: null,
-            userData: createdUser,
-            productData: null,
-            orderData: null,
-            carouselData: null,
-            commentData: null,
-          },
-          access_token: null,
-          refresh_token: null,
-        });
-      }
+
+      const accessToken = await generateAccessToken({
+        id: createdUser._id,
+        isAdmin: createdUser.isAdmin,
+      });
+      const refreshToken = await generateRefreshToken({
+        id: createdUser._id,
+        isAdmin: createdUser.isAdmin,
+      });
+
+      await RefreshToken.find({ userId: createdUser._id }).deleteMany().exec();
+      await RefreshToken.create({ userId: createdUser._id, token: refreshToken });
+
+      resolve({
+        status: 'OK',
+        message: 'Thành công',
+        statusCode: 200,
+        data: {
+          id: createdUser._id,
+          name: createdUser.name,
+          city: createdUser.city,
+          email: createdUser.email,
+          phone: createdUser.phone,
+          avatar: createdUser.avatar,
+          access_token: accessToken,
+          address: createdUser.address,
+          isAdmin: createdUser.isAdmin,
+        },
+      });
     } catch (e) {
       reject(e);
     }
@@ -119,6 +119,7 @@ const loginUser = async (userLogin) => {
     }
   });
 };
+
 const logoutUser = async (id) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -165,6 +166,7 @@ const logoutUser = async (id) => {
     }
   });
 };
+
 const updateUser = (id, data) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -443,62 +445,30 @@ const changePasswordUser = async (data) => {
   });
 };
 const forgotPasswordUser = (data) => {
-  return new Promise(async (resolve, rejects) => {
+  return new Promise(async (resolve, reject) => {
     try {
-      const user = await User.findOne({ email: data.email }); //1
+      const user = await User.findOne({ email: data.email });
       if (!user) {
-        //2
-        resolve({
-          status: 'ERR',
-          message: 'Email của tài khoản không tồn tại',
-          data: {
-            total: null,
-            pageCurrent: null,
-            totalPage: null,
-            userData: null,
-            productData: null,
-            orderData: null,
-            carouselData: null,
-            commentData: null,
-          },
-          access_token: null,
-          refresh_token: null,
+        return reject({
+          status: 'error',
+          statusCode: 404,
+          message: `Không tìm thấy người dùng có email: ${data.email}`,
         });
       }
+      const subject = 'Khôi phục lại mật khẩu';
+      const newPassword = generateRandomPassword();
+      const text = `Mật khẩu mới của bạn là: ${newPassword}`;
 
-      let token = await AccessToken.findOne({ userId: user._id }); //4
-      if (!token) {
-        //5
-        const access_token = await genneralAccessToken({
-          id: user.id,
-          isAdmin: user.isAdmin,
-        }); //6
-        token = await new AccessToken({
-          userId: user._id,
-          token: access_token,
-        }).save(); //7
-      }
+      const salt = await bcrypt.genSalt(Number(process.env.SALT)); //7
+      const hash = await bcrypt.hash(newPassword, salt); //8
 
-      const link = `${process.env.BASE_URL}/api/user/password-reset/${user._id}/${token.token}`; //8
-      await sendEmail.sendResetPasswordEmail(user.email, 'Password reset', link); //9
-      resolve({
-        status: 'OK',
-        message: 'Liên kết đặt lại mật khẩu đã được gửi đến email của bạn',
-        data: {
-          total: null,
-          pageCurrent: null,
-          totalPage: null,
-          userData: null,
-          productData: null,
-          orderData: null,
-          carouselData: null,
-          commentData: null,
-        },
-        access_token: null,
-        refresh_token: null,
-      });
+      await Promise.all([
+        User.findByIdAndUpdate(user._id, { password: hash }),
+        sendEmail.sendResetPasswordEmail(user.email, subject, text),
+      ]);
+      return resolve();
     } catch (error) {
-      rejects(error);
+      reject(error);
     }
   });
 };

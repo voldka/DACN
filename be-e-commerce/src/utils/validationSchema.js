@@ -7,6 +7,8 @@ const signUpBodyValidation = (body) => {
     name: Joi.string().required().label('name'),
     email: Joi.string().email().required().label('email'),
     password: passwordComplexity().required().label('password'),
+    phone: Joi.string().required().label('phone'),
+    address: Joi.string().label('address'),
   });
   return schema.validate(body);
 };
@@ -104,7 +106,7 @@ const changePasswordSchemaBodyValidation = (body) => {
   });
   return schema.validate(body);
 };
-const forgotPassworSchemaBodyValidation = (body) => {
+const forgotPasswordSchemaBodyValidation = (body) => {
   const schema = Joi.object({
     email: Joi.string().email().required().label('email'),
   });
@@ -150,7 +152,7 @@ module.exports = {
   updateProductSchemaBodyValidation,
   createOrderSchemaBodyValidation,
   changePasswordSchemaBodyValidation,
-  forgotPassworSchemaBodyValidation,
+  forgotPasswordSchemaBodyValidation,
   resetPasswordSchemaBodyValidation,
   createCarouselSchemaBodyValidation,
   commentSchemaValidation,

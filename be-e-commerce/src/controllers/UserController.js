@@ -1,14 +1,14 @@
 const UserService = require('../services/UserService');
 const JwtService = require('../services/JwtService');
 const validationSchema = require('../utils/validationSchema');
-const User = require('../models/UserModel');
 
 const resetPasswordUser = async (req, res) => {
   try {
     const { error } = validationSchema.resetPasswordSchemaBodyValidation(req.body);
-    if (error) return res.status(401).json({ error: true, message: error.details[0].message });
-    //chua bat loi
-    let data = {
+    if (error) {
+      return res.status(401).json({ error: true, message: error.details[0].message });
+    }
+    const data = {
       userId: req.params.userId,
       token: req.params.token,
       password: req.body.password,
@@ -27,23 +27,21 @@ const resetPasswordUser = async (req, res) => {
     });
   }
 };
+
 const forgotPasswordUser = async (req, res) => {
   try {
-    const { error } = validationSchema.forgotPassworSchemaBodyValidation(req.body);
-    if (error) return res.status(401).json({ error: true, message: error.details[0].message });
-
-    const response = await UserService.forgotPasswordUser(req.body);
-    if (response.status == 'OK') {
-      return res.status(200).json(response);
-    } else {
-      return res.status(401).json(response);
+    const { error } = validationSchema.forgotPasswordSchemaBodyValidation(req.body);
+    if (error) {
+      return res.status(400).json({ error: true, message: error.details[0].message });
     }
+
+    await UserService.forgotPasswordUser(req.body);
+    return res.status(204).send();
   } catch (error) {
-    return res.status(404).json({
-      message: error,
-    });
+    return res.status(error.statusCode || 500).json(error);
   }
 };
+
 const changePasswordUser = async (req, res) => {
   try {
     const { error } = validationSchema.changePasswordSchemaBodyValidation(req.body);
@@ -65,18 +63,14 @@ const changePasswordUser = async (req, res) => {
 const createUser = async (req, res) => {
   try {
     const { error } = validationSchema.signUpBodyValidation(req.body);
-    if (error) return res.status(401).json({ error: true, message: error.details[0].message });
+    if (error) {
+      return res.status(400).json({ error: true, message: error.details[0].message });
+    }
 
     const response = await UserService.createUser(req.body);
-    if (response.status == 'OK') {
-      return res.status(200).json(response);
-    } else {
-      return res.status(401).json(response);
-    }
-  } catch (e) {
-    return res.status(404).json({
-      message: e,
-    });
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(error.statusCode || 500).json(error);
   }
 };
 
@@ -121,16 +115,17 @@ const updateUser = async (req, res) => {
 
     const imagePath = process.env.BASE_URL + '/uploads/users/' + req.file.filename;
     const data = {
-      ...req.body, // Copy all properties from req.body
+      ...req.body,
       avatar: imagePath,
-      //  {
-      //   // data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
-      //   // contentType: "image/png",
-      // },
     };
 
     const { error } = validationSchema.updateProfileBodyValidation(data);
-    if (error) return res.status(300).json({ error: true, message: error.details[0].message });
+    if (error) {
+      return res.status(400).json({
+        status: 'error',
+        message: error.details[0].message,
+      });
+    }
 
     const response = await UserService.updateUser(userId, data);
 
@@ -208,10 +203,10 @@ const getAllUser = async (req, res) => {
 const getDetailsUser = async (req, res) => {
   try {
     const userId = req.params.userId;
-    if (!userId) {
-      return res.status(200).json({
-        status: 'ERR',
-        message: 'The userId is required',
+    if (!userId || isNaN(+userId)) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Id người dùng không hợp lệ',
       });
     }
     const response = await UserService.getDetailsUser(userId);
@@ -230,11 +225,10 @@ const getDetailsUser = async (req, res) => {
 const refreshToken = async (req, res) => {
   try {
     let refreshToken = req.cookies.refresh_token;
-    // let token = req.headers.token.split(" ")[1];
     if (!refreshToken) {
-      return res.status(401).json({
-        status: 'ERR',
-        message: 'The Refresh Token is required',
+      return res.status(400).json({
+        status: 'error',
+        message: 'Không tìm thấy refreshToken đính kèm',
       });
     }
     const { refresh_token, ...response } = await JwtService.refreshTokenJwtService(refreshToken);
@@ -262,10 +256,10 @@ const logoutUser = async (req, res) => {
   try {
     if (req.cookies && req.cookies.refresh_token) {
       const userId = req.params.userId;
-      if (!userId) {
-        return res.status(200).json({
-          status: 'ERR',
-          message: 'The userId is required',
+      if (!userId || isNaN(+userId)) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Id người dùng không hợp lệ',
         });
       }
       const response = await UserService.logoutUser(userId);

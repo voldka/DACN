@@ -94,10 +94,9 @@ const sendResetPasswordEmail = async (email, subject, text) => {
       subject: subject,
       text: text,
     });
-    console.log('email sent sucessfully');
     return info;
   } catch (error) {
-    console.log(error, 'email not sent');
+    throw error;
   }
 };
 module.exports = {
