@@ -1,0 +1,34 @@
+const fs = require('fs');
+const path = require('path');
+const multer = require('multer');
+const router = require('express').Router();
+const ProductTypeController = require('../controllers/ProductTypeController');
+const generateFilename = require('../utils/generateFilename');
+
+const uploadFile = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      const folderPath = path.resolve(
+        __dirname,
+        '../',
+        '../',
+        'public',
+        'uploads',
+        'product_types',
+      );
+      fs.mkdirSync(folderPath, { recursive: true });
+      cb(null, folderPath);
+    },
+    filename: function (req, file, cb) {
+      const filename = generateFilename();
+      cb(null, filename + path.extname(file.originalname));
+    },
+  }),
+});
+
+router
+  .route('/')
+  .get(ProductTypeController.getAll)
+  .post(uploadFile.single('image'), ProductTypeController.create);
+
+module.exports = router;

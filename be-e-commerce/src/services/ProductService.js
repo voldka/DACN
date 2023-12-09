@@ -1,12 +1,6 @@
-const Product = require("../models/ProductModel");
-const Order = require("../models/OrderProduct");
-const RatingList = require("../models/RatingList");
-const multer = require("multer");
-var fs = require("fs");
-var path = require("path");
-const OderService = require("../services/OrderService");
-const { set } = require("mongoose");
-const mongoose = require("mongoose");
+const Product = require('../models/ProductModel');
+const Order = require('../models/OrderProduct');
+const RatingList = require('../models/RatingList');
 
 const hasProductId = (productsSet, productId) => {
   let stringProduct;
@@ -22,8 +16,6 @@ const ratingProduct = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
       let { productId, userId, starts } = data;
-      // const userObjectId = mongoose.Types.ObjectId(userId); // Thay 'userIdString' bằng giá trị ObjectId của user
-      // const productObjectId = mongoose.Types.ObjectId(productId);
       const flagRatingList = await RatingList.find({
         user: userId,
         product: productId,
@@ -43,7 +35,7 @@ const ratingProduct = (data) => {
         let count = products.size;
         if (!count) {
           resolve({
-            status: "ERR",
+            status: 'ERR',
             message: `Nguoi dung voi id: ${userId} chua tung mua hang`,
             data: {
               total: null,
@@ -66,9 +58,9 @@ const ratingProduct = (data) => {
 
         if (hasProductId(products, productId)) {
           let product = await getDetailsProduct(productId);
-          if (product.status == "ERR") {
+          if (product.status == 'ERR') {
             resolve({
-              status: "ERR",
+              status: 'ERR',
               message: `khong the tim thay product voi id: ${productId}`,
               data: {
                 total: null,
@@ -88,15 +80,10 @@ const ratingProduct = (data) => {
           let productInDb = product.data.productData;
           productInDb.countRating = productInDb.countRating + 1;
           productInDb.rating =
-            (productInDb.rating * (productInDb.countRating - 1) + starts) /
-            productInDb.countRating;
-          const productAfterUpdate = await Product.findByIdAndUpdate(
-            productInDb.id,
-            productInDb,
-            {
-              new: true,
-            }
-          );
+            (productInDb.rating * (productInDb.countRating - 1) + starts) / productInDb.countRating;
+          const productAfterUpdate = await Product.findByIdAndUpdate(productInDb.id, productInDb, {
+            new: true,
+          });
 
           await RatingList.create({
             user: userId,
@@ -104,7 +91,7 @@ const ratingProduct = (data) => {
           });
           // let productAfterUpdate = await updateProduct(productInDb.id, productInDb);
           resolve({
-            status: "OK",
+            status: 'OK',
             message: `Complete`,
             data: {
               total: null,
@@ -122,13 +109,13 @@ const ratingProduct = (data) => {
           });
         } else {
           resolve({
-            status: "ERR",
+            status: 'ERR',
             message: `Nguoi dung voi id: ${userId} khong dc danh gia san pham chua tung thuc hien giao dich`,
             data: {
               total: null,
               pageCurrent: null,
               totalPage: null,
-              
+
               userData: null,
               productData: null,
               orderData: null,
@@ -141,13 +128,13 @@ const ratingProduct = (data) => {
         }
       } else {
         resolve({
-          status: "ERR",
+          status: 'ERR',
           message: `Nguoi dung voi id: ${userId} da danh gia san pham id: ${productId}`,
           data: {
             total: null,
             pageCurrent: null,
             totalPage: null,
-            
+
             userData: null,
             productData: null,
             orderData: null,
@@ -164,68 +151,17 @@ const ratingProduct = (data) => {
   });
 };
 
-const createProduct = (newProduct) => {
+const createProduct = (data) => {
   return new Promise(async (resolve, reject) => {
-    const {
-      name,
-      image,
-      type,
-      countInStock,
-      price,
-      rating,
-      description,
-      discount,
-    } = newProduct;
     try {
       const checkProduct = await Product.findOne({
-        name: name,
+        name: data.name,
       });
       if (checkProduct !== null) {
-        resolve({
-          status: "ERR",
-          message: "đã tồn tại sản phẩm trùng tên",
-          data: {
-            total: null,
-            pageCurrent: null,
-            totalPage: null,
-            userData: null,
-            productData: null,
-            orderData: null,
-            carouselData: null,
-            commentData: null,
-          },
-          access_token: null,
-          refresh_token: null,
-        });
+        return reject({ status: 'error', statusCode: 400, message: 'Tên sản phẩm đã tồn tại' });
       }
-      const newProduct = await Product.create({
-        name,
-        image,
-        type,
-        countInStock,
-        price,
-        rating,
-        description,
-        discount,
-      });
-      if (newProduct) {
-        resolve({
-          status: "OK",
-          message: "Thành công",
-          data: {
-            total: null,
-            pageCurrent: null,
-            totalPage: null,
-            userData: null,
-            productData: newProduct,
-            orderData: null,
-            carouselData: null,
-            commentData: null,
-          },
-          access_token: null,
-          refresh_token: null,
-        });
-      }
+      const newProduct = await Product.create(data);
+      return resolve(newProduct);
     } catch (e) {
       reject(e);
     }
@@ -240,8 +176,8 @@ const updateProduct = (id, data) => {
       });
       if (checkProduct === null) {
         resolve({
-          status: "ERR",
-          message: "Không tìm thấy",
+          status: 'ERR',
+          message: 'Không tìm thấy',
           data: {
             total: null,
             pageCurrent: null,
@@ -261,8 +197,8 @@ const updateProduct = (id, data) => {
         new: true,
       });
       resolve({
-        status: "OK",
-        message: "Thành công",
+        status: 'OK',
+        message: 'Thành công',
         data: {
           total: null,
           pageCurrent: null,
@@ -290,8 +226,8 @@ const deleteProduct = (id) => {
       });
       if (checkProduct === null) {
         resolve({
-          status: "ERR",
-          message: "Không tìm thấy",
+          status: 'ERR',
+          message: 'Không tìm thấy',
           data: {
             total: null,
             pageCurrent: null,
@@ -309,8 +245,8 @@ const deleteProduct = (id) => {
 
       await Product.findByIdAndDelete(id);
       resolve({
-        status: "OK",
-        message: "Delete product Thành công",
+        status: 'OK',
+        message: 'Delete product Thành công',
         data: {
           total: null,
           pageCurrent: null,
@@ -335,8 +271,8 @@ const deleteManyProduct = (ids) => {
     try {
       await Product.deleteMany({ _id: ids });
       resolve({
-        status: "OK",
-        message: "Delete product Thành công",
+        status: 'OK',
+        message: 'Delete product Thành công',
         data: {
           total: null,
           pageCurrent: null,
@@ -364,8 +300,8 @@ const getDetailsProduct = (id) => {
       });
       if (product === null) {
         resolve({
-          status: "ERR",
-          message: "Không tìm thấy",
+          status: 'ERR',
+          message: 'Không tìm thấy',
           data: {
             total: null,
             pageCurrent: null,
@@ -381,8 +317,8 @@ const getDetailsProduct = (id) => {
         });
       }
       resolve({
-        status: "OK",
-        message: "Complete",
+        status: 'OK',
+        message: 'Complete',
         data: {
           total: null,
           pageCurrent: null,
@@ -402,88 +338,24 @@ const getDetailsProduct = (id) => {
   });
 };
 
-const getAllProduct = (limit, page, sort, filter) => {
+const getAllProduct = (filter, page, pageSize) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const totalProduct = await Product.count();
-      let allProduct = [];
-      if (filter) {
-        const label = filter[0];
-        const allObjectFilter = await Product.find({
-          [label]: { $regex: filter[1] },
-        })
-          .limit(limit)
-          .skip(page * limit)
-          .sort({ createdAt: -1, updatedAt: -1 });
-        resolve({
-          status: "OK",
-          message: "Thành công",
-          data: {
-            total: totalProduct,
-            pageCurrent: Number(page + 1),
-            totalPage: Math.ceil(totalProduct / limit),
-            userData: null,
-            productData: allObjectFilter,
+      const totalProduct = await Product.countDocuments(filter);
+      const allProducts = await Product.find(filter)
+        .limit(parseInt(pageSize, 10))
+        .skip((page - 1) * pageSize)
+        .sort({ createdAt: -1, updatedAt: -1 });
 
-            orderData: null,
-            carouselData: null,
-            commentData: null,
-          },
-          access_token: null,
-          refresh_token: null,
-        });
-      }
-      if (sort) {
-        const objectSort = {};
-        objectSort[sort[1]] = sort[0];
-        const allProductSort = await Product.find()
-          .limit(limit)
-          .skip(page * limit)
-          .sort(objectSort)
-          .sort({ createdAt: -1, updatedAt: -1 });
-        resolve({
-          status: "OK",
-          message: "Thành công",
-          data: {
-            total: totalProduct,
-            pageCurrent: Number(page + 1),
-            totalPage: Math.ceil(totalProduct / limit),
-            userData: null,
-            productData: allProductSort,
-            orderData: null,
-            carouselData: null,
-            commentData: null,
-          },
-          access_token: null,
-          refresh_token: null,
-        });
-      }
-      if (!limit) {
-        allProduct = await Product.find().sort({
-          createdAt: -1,
-          updatedAt: -1,
-        });
-      } else {
-        allProduct = await Product.find()
-          .limit(limit)
-          .skip(page * limit)
-          .sort({ createdAt: -1, updatedAt: -1 });
-      }
       resolve({
-        status: "OK",
-        message: "Thành công",
+        status: 'OK',
+        message: 'Thành công',
         data: {
           total: totalProduct,
-          pageCurrent: Number(page + 1),
-          totalPage: Math.ceil(totalProduct / limit),
-          userData: null,
-          productData: allProduct,
-          orderData: null,
-          carouselData: null,
-          commentData: null,
+          pageCurrent: Number(page),
+          totalPage: Math.ceil(totalProduct / pageSize),
+          productData: allProducts,
         },
-        access_token: null,
-        refresh_token: null,
       });
     } catch (e) {
       reject(e);
@@ -494,25 +366,9 @@ const getAllProduct = (limit, page, sort, filter) => {
 const getAllType = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const allType = await Product.distinct("type");
-      resolve({
-        status: "OK",
-        message: "Thành công",
-        data: {
-          total: null,
-          pageCurrent: null,
-          totalPage: null,
-          userData: null,
-          productData: allType,
-          orderData: null,
-          carouselData: null,
-          commentData: null,
-        },
-        access_token: null,
-        refresh_token: null,
-      });
+      return resolve([]);
     } catch (e) {
-      reject(e);
+      return reject(e);
     }
   });
 };

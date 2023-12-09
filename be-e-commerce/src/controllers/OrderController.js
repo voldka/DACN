@@ -1,15 +1,10 @@
-const OrderService = require("../services/OrderService");
-const validationSchema = require("../utils/validationSchema");
+const OrderService = require('../services/OrderService');
+const validationSchema = require('../utils/validationSchema');
 
 const createOrder = async (req, res) => {
   try {
-    const { error } = validationSchema.createOrderSchemaBodyValidation(
-      req.body
-    );
-    if (error)
-      return res
-        .status(401)
-        .json({ error: true, message: error.details[0].message });
+    const { error } = validationSchema.createOrderSchemaBodyValidation(req.body);
+    if (error) return res.status(401).json({ error: true, message: error.details[0].message });
 
     const response = await OrderService.createOrder(req.body);
 
@@ -26,15 +21,14 @@ const getAllOrderDetails = async (req, res) => {
     const userId = req.params.userId;
     if (!userId) {
       return res.status(200).json({
-        status: "ERR",
-        message: "The userId is required",
+        status: 'ERR',
+        message: 'The userId is required',
       });
     }
 
     const response = await OrderService.getAllOrderDetails(userId);
     return res.status(200).json(response);
   } catch (e) {
-    // console.log(e)
     return res.status(404).json({
       message: e,
     });
@@ -46,15 +40,14 @@ const getDetailsOrder = async (req, res) => {
     const orderId = req.params.orderId;
     if (!orderId) {
       return res.status(200).json({
-        status: "ERR",
-        message: "The orderId is required",
+        status: 'ERR',
+        message: 'The orderId is required',
       });
     }
 
     const response = await OrderService.getOrderDetails(orderId);
     return res.status(200).json(response);
   } catch (e) {
-    // console.log(e)
     return res.status(404).json({
       message: e,
     });
@@ -67,8 +60,8 @@ const cancelOrderDetails = async (req, res) => {
     const orderId = req.body.orderId;
     if (!orderId) {
       return res.status(200).json({
-        status: "ERR",
-        message: "The orderId is required",
+        status: 'ERR',
+        message: 'The orderId is required',
       });
     }
     const response = await OrderService.cancelOrderDetails(orderId, data);

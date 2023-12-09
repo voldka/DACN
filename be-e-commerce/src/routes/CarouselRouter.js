@@ -1,3 +1,4 @@
+const fs = require('fs');
 const express = require('express');
 const router = express.Router();
 const CarouselController = require('../controllers/CarouselController');
@@ -6,18 +7,20 @@ const { authMiddleWare } = require('../middleware/authMiddleware');
 
 const multer = require('multer');
 const path = require('path');
+const generateFilename = require('../utils/generateFilename');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.resolve(__dirname, '../', '../', 'public', 'uploads', 'carousels'));
+    const folderPath = path.resolve(__dirname, '../', '../', 'public', 'uploads', 'carousels');
+    fs.mkdirSync(folderPath, { recursive: true });
+    cb(null, folderPath);
   },
   filename: function (req, file, cb) {
-    let name = '';
-    name = req.body?.name.replace(/\s/g, '');
-    cb(null, name + '-' + file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    const filename = generateFilename();
+    cb(null, filename + path.extname(file.originalname));
   },
 });
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 router.post('/create', authMiddleWare, upload.array('images'), CarouselController.createCarousel);
 router.put(
@@ -31,6 +34,5 @@ router.post('/delete-many', authMiddleWare, CarouselController.deleteMany);
 
 router.get('/get-details/:CarouselId', CarouselController.getDetailsCarousel);
 router.get('/get-all', CarouselController.getAllCarousel);
-// router.get("/get-all-type", CarouselController.getAllType);
 
 module.exports = router;

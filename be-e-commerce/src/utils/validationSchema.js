@@ -44,10 +44,6 @@ const createProductSchemaBodyValidation = (body) => {
   const schema = Joi.object({
     name: Joi.string().required().label('name'),
     image: Joi.array().items(Joi.string()).min(1).required(),
-    // image: Joi.string().required().label("image"),
-    // image: Joi.binary()
-    //   .encoding("base64")
-    //   .valid("jpg", "jpeg", "png", "gif", "bmp"),
     type: Joi.string().required().label('type'),
     price: Joi.number().min(0).required().label('price'),
     countInStock: Joi.number().min(0).required().label('countInStock'),
@@ -62,10 +58,6 @@ const updateProductSchemaBodyValidation = (body) => {
   const schema = Joi.object({
     name: Joi.string().label('name'),
     image: Joi.array().items(Joi.string()).min(1).required(),
-    // image: Joi.string().required().label("image"),
-    // image: Joi.binary()
-    //   .encoding("base64")
-    //   .valid("jpg", "jpeg", "png", "gif", "bmp"),
     type: Joi.string().label('type'),
     price: Joi.number().min(0).label('price'),
     countInStock: Joi.number().min(0).label('countInStock'),

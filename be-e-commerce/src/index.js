@@ -20,6 +20,7 @@ app.use('/api/order', require('./routes/OrderRouter'));
 app.use('/api/payment', require('./routes/PaymentRouter'));
 app.use('/api/carousel', require('./routes/CarouselRouter'));
 app.use('/api/comment', require('./routes/CommentRouter'));
+app.use('/api/product-types', require('./routes/ProductTypeRouter'));
 
 mongo.connect();
 

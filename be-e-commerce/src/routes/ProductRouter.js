@@ -1,60 +1,35 @@
-const express = require("express");
+const fs = require('fs');
+const path = require('path');
+const express = require('express');
+const multer = require('multer');
 const router = express.Router();
-const ProductController = require("../controllers/ProductController");
-const multer = require("multer");
-const {
-  authMiddleWare,
-  authUserMiddleWare,
-} = require("../middleware/authMiddleware");
-const path = require("path");
+
+const generateFilename = require('../utils/generateFilename');
+const ProductController = require('../controllers/ProductController');
+const { authMiddleWare } = require('../middleware/authMiddleware');
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(
-      null,
-      path.resolve(__dirname, "../", "../", "public", "uploads", "products")
-    );
+    const folderPath = path.resolve(__dirname, '../', '../', 'public', 'uploads', 'products');
+    fs.mkdirSync(folderPath, { recursive: true });
+    cb(null, folderPath);
   },
   filename: function (req, file, cb) {
-    let name = "";
-    name = req.body?.name.replace(/\s/g, "");
-    cb(
-      null,
-      name +
-        "-" +
-        file.fieldname +
-        "-" +
-        Date.now() +
-        path.extname(file.originalname)
-    );
+    const filename = generateFilename();
+    cb(null, filename + path.extname(file.originalname));
   },
 });
-const upload = multer({ storage: storage });
-// put the HTML file containing your form in a directory named "public" (relative to where this script is located)
-// app.get("/", express.static(path.join(__dirname, "./public")));
+const upload = multer({ storage });
 
-router.post("/rating/:userId/:productId", authUserMiddleWare,ProductController.ratingProduct);
+router.post('/rating/:userId/:productId', ProductController.ratingProduct);
 
-router.post(
-  "/create",
-  authMiddleWare,
-  upload.array("images"),
-  ProductController.createProduct
-);
-router.put(
-  "/update/:productId",
-  authMiddleWare,
-  upload.array("images"),
-  ProductController.updateProduct
-);
-router.delete(
-  "/delete/:productId",
-  authMiddleWare,
-  ProductController.deleteProduct
-);
-router.post("/delete-many", authMiddleWare, ProductController.deleteMany);
+router.post('/create', upload.array('images'), ProductController.createProduct);
+router.put('/update/:productId', upload.array('images'), ProductController.updateProduct);
+router.delete('/delete/:productId', ProductController.deleteProduct);
+router.post('/delete-many', ProductController.deleteMany);
 
-router.get("/get-details/:productId", ProductController.getDetailsProduct);
-router.get("/get-all", ProductController.getAllProduct);
-router.get("/get-all-type", ProductController.getAllType);
+router.get('/get-details/:productId', ProductController.getDetailsProduct);
+router.get('/get-all', ProductController.getAllProduct);
+router.get('/get-all-type', ProductController.getAllType);
 
 module.exports = router;

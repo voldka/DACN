@@ -1,6 +1,6 @@
-const { array } = require("joi");
-const ProductService = require("../services/ProductService");
-const validationSchema = require("../utils/validationSchema");
+const { array } = require('joi');
+const ProductService = require('../services/ProductService');
+const validationSchema = require('../utils/validationSchema');
 
 const ratingProduct = async (req, res) => {
   try {
@@ -12,10 +12,7 @@ const ratingProduct = async (req, res) => {
       productId,
       starts,
     });
-    if (error)
-      return res
-        .status(401)
-        .json({ error: true, message: error.details[0].message });
+    if (error) return res.status(401).json({ error: true, message: error.details[0].message });
 
     const response = await ProductService.ratingProduct({
       productId,
@@ -25,7 +22,7 @@ const ratingProduct = async (req, res) => {
     return res.status(200).json(response);
   } catch (e) {
     console.log(e);
-    return res.status(404).json({
+    return res.status(e.statusCode || 500).json({
       message: e.message,
     });
   }
@@ -33,50 +30,32 @@ const ratingProduct = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
-    // let name ="";
-    // name = req.body?.name.replace(/\s/g, "")
-
-    // const imagePath = process.env.BASE_URL + '/uploads/product/' + req.file.filename;
     const newImages = req.files.map(
-      (file) =>
-        process.env.BASE_URL +
-        "/uploads/product/" +
-        file.filename.replace(/\s/g, "")
+      (file) => process.env.BASE_URL + '/uploads/products/' + file.filename.replace(/\s/g, ''),
     );
 
     let images = new Array();
     images = images.concat(newImages);
 
     const data = {
-      ...req.body, // Copy all properties from req.body
+      ...req.body,
       image: images,
-      //  {
-      //   // data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
-      //   // contentType: "image/png",
-      // },
     };
-    //sai logic b1 tao object = req, b2 validation,..
     const { error } = validationSchema.createProductSchemaBodyValidation(data);
-    if (error)
-      return res
-        .status(401)
-        .json({ error: true, message: error.details[0].message });
-
-    // const imagePath = req.file.path;
-    // const obj = {
-    //   ...req.body, // Copy all properties from req.body
-    //   image: imagePath,
-    //   //  {
-    //   //   // data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
-    //   //   // contentType: "image/png",
-    //   // },
-    // };
+    if (error) {
+      return res.status(400).json({ error: true, message: error.details[0].message });
+    }
 
     const response = await ProductService.createProduct(data);
-    return res.status(200).json(response);
+    return res.status(201).json({
+      status: 'success',
+      statusCode: 201,
+      message: 'Thêm sản phẩm thành công',
+      data: response,
+    });
   } catch (e) {
     console.log(e);
-    return res.status(404).json({
+    return res.status(e.statusCode || 500).json({
       message: e.message,
     });
   }
@@ -86,50 +65,39 @@ const updateProduct = async (req, res) => {
   try {
     const productId = req.params.productId;
     if (!productId) {
-      return res.status(200).json({
-        status: "ERR",
-        message: "The productId is required",
+      return res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: 'Vui lòng cung cấp productId',
       });
     }
 
     const newImages = req.files.map(
-      (file) =>
-        process.env.BASE_URL +
-        "/uploads/product/" +
-        file.filename.replace(/\s/g, "")
+      (file) => process.env.BASE_URL + '/uploads/product/' + file.filename.replace(/\s/g, ''),
     );
 
-    let images = new Array();
-    images = images.concat(newImages);
+    const images = [].concat(newImages);
 
     const data = {
-      ...req.body, // Copy all properties from req.body
+      ...req.body,
       image: images,
-      //  {
-      //   // data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
-      //   // contentType: "image/png",
-      // },
     };
     const { error } = validationSchema.createProductSchemaBodyValidation(data);
-    if (error)
-      return res
-        .status(401)
-        .json({ error: true, message: error.details[0].message });
-
-    // const obj = {
-    //   ...req.body, // Copy all properties from req.body
-    //   image: {
-    //     data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
-    //     contentType: "image/png",
-    //   },
-    // };
+    if (error) {
+      return res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: error.details[0].message,
+      });
+    }
 
     const response = await ProductService.updateProduct(productId, data);
 
     return res.status(200).json(response);
   } catch (e) {
-    return res.status(404).json({
-      message: e,
+    console.log(e);
+    return res.status(e.statusCode || 500).json({
+      message: e.message,
     });
   }
 };
@@ -138,9 +106,10 @@ const getDetailsProduct = async (req, res) => {
   try {
     const productId = req.params.productId;
     if (!productId) {
-      return res.status(200).json({
-        status: "ERR",
-        message: "The productId is required",
+      return res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: 'Vui lòng cung cấp productId',
       });
     }
     const response = await ProductService.getDetailsProduct(productId);
@@ -157,15 +126,16 @@ const deleteProduct = async (req, res) => {
     const productId = req.params.productId;
     if (!productId) {
       return res.status(200).json({
-        status: "ERR",
-        message: "The productId is required",
+        status: 'ERR',
+        message: 'The productId is required',
       });
     }
     const response = await ProductService.deleteProduct(productId);
     return res.status(200).json(response);
   } catch (e) {
-    return res.status(404).json({
-      message: e,
+    console.log(e);
+    return res.status(e.statusCode || 500).json({
+      message: e.message,
     });
   }
 };
@@ -174,33 +144,41 @@ const deleteMany = async (req, res) => {
   try {
     const ids = req.body.ids;
     if (!ids) {
-      return res.status(200).json({
-        status: "ERR",
-        message: "The ids is required",
+      return res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: 'Vui lòng cung cấp danh sách productId',
       });
     }
     const response = await ProductService.deleteManyProduct(ids);
     return res.status(200).json(response);
   } catch (e) {
-    return res.status(404).json({
-      message: e,
+    console.log(e);
+    return res.status(e.statusCode || 500).json({
+      message: e.message,
     });
   }
 };
 
 const getAllProduct = async (req, res) => {
   try {
-    const { limit, page, sort, filter } = req.query;
-    const response = await ProductService.getAllProduct(
-      Number(limit) || null,
-      Number(page) || 0,
-      sort,
-      filter
-    );
+    const filters = {};
+    const { name, productTypes, page = 1, pageSize = 10 } = req.query;
+
+    if (name) {
+      filters.name = { $regex: new RegExp(name, 'i') }; // Case-insensitive name search
+    }
+    if (productTypes) {
+      const typeArray = productTypes.split(','); // Convert comma-separated types to an array
+      filters.type = { $in: typeArray };
+    }
+
+    const response = await ProductService.getAllProduct(filters, page, pageSize);
     return res.status(200).json(response);
   } catch (e) {
-    return res.status(404).json({
-      message: e,
+    console.log(e);
+    return res.status(e.statusCode || 500).json({
+      message: e.message,
     });
   }
 };
@@ -210,8 +188,9 @@ const getAllType = async (req, res) => {
     const response = await ProductService.getAllType();
     return res.status(200).json(response);
   } catch (e) {
-    return res.status(404).json({
-      message: e,
+    console.log(e);
+    return res.status(e.statusCode || 500).json({
+      message: e.message,
     });
   }
 };

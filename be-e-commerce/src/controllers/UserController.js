@@ -187,15 +187,19 @@ const deleteMany = async (req, res) => {
 
 const getAllUser = async (req, res) => {
   try {
-    const response = await UserService.getAllUser();
-    if (response.status == 'OK') {
-      return res.status(200).json(response);
-    } else {
-      return res.status(401).json(response);
-    }
+    const user = await UserService.getAllUsers();
+    return res.status(200).json({
+      status: 'success',
+      statusCode: 200,
+      message: 'Thành công',
+      data: user,
+    });
   } catch (e) {
-    return res.status(404).json({
-      message: e,
+    console.log(e);
+    return res.status(500).json({
+      status: 'error',
+      statusCode: 500,
+      message: e.message,
     });
   }
 };

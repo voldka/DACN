@@ -167,283 +167,20 @@ const logoutUser = async (id) => {
   });
 };
 
-const updateUser = (id, data) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const checkUser = await User.findOne({
-        _id: id,
-      });
-      if (checkUser === null) {
-        resolve({
-          status: 'ERR',
-          message: 'Không tìm thấy',
-          data: {
-            total: null,
-            pageCurrent: null,
-            totalPage: null,
-            userData: null,
-            productData: null,
-            orderData: null,
-            carouselData: null,
-            commentData: null,
-          },
-          access_token: null,
-          refresh_token: null,
-        });
-      }
+const updateUser = (id, data) => {};
 
-      const updatedUser = await User.findByIdAndUpdate(id, data, { new: true });
-      resolve({
-        status: 'OK',
-        message: 'Thành công',
-        data: {
-          total: null,
-          pageCurrent: null,
-          totalPage: null,
-          userData: updatedUser,
-          productData: null,
-          orderData: null,
-          carouselData: null,
-          commentData: null,
-        },
-        access_token: null,
-        refresh_token: null,
-      });
-    } catch (e) {
-      reject(e);
-    }
-  });
+const deleteUser = (id) => {};
+
+const deleteManyUser = (ids) => {};
+
+const getAllUsers = () => {
+  return User.find()
+    .select({ __v: 0, updatedAt: 0, password: 0 })
+    .sort([['createdAt', 'desc']]);
 };
 
-const deleteUser = (id) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const checkUser = await User.findOne({
-        _id: id,
-      });
-      if (checkUser === null) {
-        resolve({
-          status: 'ERR',
-          message: 'Không tìm thấy',
-          data: {
-            total: null,
-            pageCurrent: null,
-            totalPage: null,
-            userData: null,
-            productData: null,
-            orderData: null,
-            carouselData: null,
-            commentData: null,
-          },
-          access_token: null,
-          refresh_token: null,
-        });
-      }
+const getDetailsUser = (id) => {};
 
-      await User.findByIdAndDelete(id);
-      resolve({
-        status: 'OK',
-        message: 'Thành công',
-        data: {
-          total: null,
-          pageCurrent: null,
-          totalPage: null,
-          userData: null,
-          productData: null,
-          orderData: null,
-          carouselData: null,
-          commentData: null,
-        },
-        access_token: null,
-        refresh_token: null,
-      });
-    } catch (e) {
-      reject(e);
-    }
-  });
-};
-
-const deleteManyUser = (ids) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      await User.deleteMany({ _id: ids });
-      resolve({
-        status: 'OK',
-        message: 'Thành công',
-        data: {
-          total: null,
-          pageCurrent: null,
-          totalPage: null,
-          userData: null,
-          productData: null,
-          orderData: null,
-          carouselData: null,
-          commentData: null,
-        },
-        access_token: null,
-        refresh_token: null,
-      });
-    } catch (e) {
-      reject(e);
-    }
-  });
-};
-
-const getAllUser = () => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const allUser = await User.find().sort({ createdAt: -1, updatedAt: -1 });
-      resolve({
-        status: 'OK',
-        message: 'Thành công',
-        data: {
-          total: null,
-          pageCurrent: null,
-          totalPage: null,
-          userData: allUser,
-          productData: null,
-          orderData: null,
-          carouselData: null,
-          commentData: null,
-        },
-        access_token: null,
-        refresh_token: null,
-      });
-    } catch (e) {
-      reject(e);
-    }
-  });
-};
-
-const getDetailsUser = (id) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const user = await User.findOne({
-        _id: id,
-      });
-      if (user === null) {
-        resolve({
-          status: 'ERR',
-          message: 'Không tìm thấy',
-          data: {
-            total: null,
-            pageCurrent: null,
-            totalPage: null,
-            userData: null,
-            productData: null,
-            orderData: null,
-            carouselData: null,
-            commentData: null,
-          },
-          access_token: null,
-          refresh_token: null,
-        });
-      }
-      resolve({
-        status: 'OK',
-        message: 'Thành công',
-        data: {
-          total: null,
-          pageCurrent: null,
-          totalPage: null,
-          userData: user,
-          productData: null,
-          orderData: null,
-          carouselData: null,
-          commentData: null,
-        },
-        access_token: null,
-        refresh_token: null,
-      });
-    } catch (e) {
-      reject(e);
-    }
-  });
-};
-const changePasswordUser = async (data) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const { email, oldPassword, newPassword } = data;
-
-      const checkUser = await User.findOne({
-        email: email,
-      });
-      if (checkUser === null) {
-        resolve({
-          status: 'ERR',
-          message: 'Không tìm thấy',
-          data: {
-            total: null,
-            pageCurrent: null,
-            totalPage: null,
-            userData: null,
-            productData: null,
-            orderData: null,
-            carouselData: null,
-            commentData: null,
-          },
-          access_token: null,
-          refresh_token: null,
-        });
-      }
-
-      const comparePassword = bcrypt.compareSync(oldPassword, checkUser.password);
-
-      if (!comparePassword) {
-        resolve({
-          status: 'ERR',
-          message: 'Mật khẩu không chính xác',
-          data: {
-            total: null,
-            pageCurrent: null,
-            totalPage: null,
-            userData: null,
-            productData: null,
-            orderData: null,
-            carouselData: null,
-            commentData: null,
-          },
-          access_token: null,
-          refresh_token: null,
-        });
-      } else {
-        const salt = await bcrypt.genSalt(Number(process.env.SALT));
-        const password = await bcrypt.hash(newPassword, salt);
-
-        console.log(checkUser.password);
-        checkUser.password = password;
-        console.log(checkUser.password);
-
-        const rs = await User.updateOne({ email: checkUser.email }, checkUser);
-        let checkUser1 = await User.findOne({
-          email: email,
-        });
-        console.log(checkUser1.password);
-
-        if (rs) {
-          resolve({
-            status: 'OK',
-            message: 'Cập nhật Thành công',
-            data: {
-              total: null,
-              pageCurrent: null,
-              totalPage: null,
-              userData: rs,
-              productData: null,
-              orderData: null,
-              carouselData: null,
-              commentData: null,
-            },
-            access_token: null,
-            refresh_token: null,
-          });
-        }
-      }
-    } catch (error) {
-      reject(e);
-    }
-  });
-};
 const forgotPasswordUser = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -546,15 +283,15 @@ const resetPasswordUser = async (data) => {
     }
   });
 };
+
 module.exports = {
   createUser,
   loginUser,
   updateUser,
   deleteUser,
-  getAllUser,
+  getAllUsers,
   getDetailsUser,
   deleteManyUser,
-  changePasswordUser,
   forgotPasswordUser,
   resetPasswordUser,
   logoutUser,
