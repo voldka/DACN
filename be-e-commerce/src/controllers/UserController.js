@@ -107,8 +107,9 @@ const updateUser = async (req, res) => {
   try {
     const userId = req.params.userId;
     if (!userId) {
-      return res.status(200).json({
-        status: 'ERR',
+      return res.status(400).json({
+        status: 'error',
+        statusCode: 400,
         message: 'The userId is required',
       });
     }
