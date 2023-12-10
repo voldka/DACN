@@ -22,9 +22,7 @@ const ratingProduct = async (req, res) => {
     return res.status(200).json(response);
   } catch (e) {
     console.log(e);
-    return res.status(e.statusCode || 500).json({
-      message: e.message,
-    });
+    return res.status(e.statusCode || 500).json(e);
   }
 };
 
@@ -43,7 +41,11 @@ const createProduct = async (req, res) => {
     };
     const { error } = validationSchema.createProductSchemaBodyValidation(data);
     if (error) {
-      return res.status(400).json({ error: true, message: error.details[0].message });
+      return res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: error.details[0].message,
+      });
     }
 
     const response = await ProductService.createProduct(data);
@@ -55,9 +57,7 @@ const createProduct = async (req, res) => {
     });
   } catch (e) {
     console.log(e);
-    return res.status(e.statusCode || 500).json({
-      message: e.message,
-    });
+    return res.status(e.statusCode || 500).json(e);
   }
 };
 
@@ -96,9 +96,7 @@ const updateProduct = async (req, res) => {
     return res.status(200).json(response);
   } catch (e) {
     console.log(e);
-    return res.status(e.statusCode || 500).json({
-      message: e.message,
-    });
+    return res.status(e.statusCode || 500).json(e);
   }
 };
 
@@ -134,9 +132,7 @@ const deleteProduct = async (req, res) => {
     return res.status(200).json(response);
   } catch (e) {
     console.log(e);
-    return res.status(e.statusCode || 500).json({
-      message: e.message,
-    });
+    return res.status(e.statusCode || 500).json(e);
   }
 };
 
@@ -154,9 +150,7 @@ const deleteMany = async (req, res) => {
     return res.status(200).json(response);
   } catch (e) {
     console.log(e);
-    return res.status(e.statusCode || 500).json({
-      message: e.message,
-    });
+    return res.status(e.statusCode || 500).json(e);
   }
 };
 
@@ -177,9 +171,7 @@ const getAllProduct = async (req, res) => {
     return res.status(200).json(response);
   } catch (e) {
     console.log(e);
-    return res.status(e.statusCode || 500).json({
-      message: e.message,
-    });
+    return res.status(e.statusCode || 500).json(e);
   }
 };
 
@@ -189,9 +181,7 @@ const getAllType = async (req, res) => {
     return res.status(200).json(response);
   } catch (e) {
     console.log(e);
-    return res.status(e.statusCode || 500).json({
-      message: e.message,
-    });
+    return res.status(e.statusCode || 500).json(e);
   }
 };
 

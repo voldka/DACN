@@ -167,9 +167,37 @@ const logoutUser = async (id) => {
   });
 };
 
-const updateUser = (id, data) => {};
+const updateUser = async (id, data) => {
+  if (data.password) {
+    const salt = await bcrypt.genSalt(Number(process.env.SALT)); //7
+    const hash = await bcrypt.hash(data.password, salt); //8
+    data.password = hash;
+  }
+  return User.findByIdAndUpdate(id, data, { new: true }).select({
+    password: 0,
+    __v: 0,
+    updatedAt: 0,
+  });
+};
 
-const deleteUser = (id) => {};
+const deleteUser = (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return reject({
+          status: 'error',
+          statusCode: 404,
+          message: `Không tìm thấy người dùng có ID: ${userId}`,
+        });
+      }
+      await User.deleteOne({ _id: userId });
+      return resolve(null);
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 
 const deleteManyUser = (ids) => {};
 

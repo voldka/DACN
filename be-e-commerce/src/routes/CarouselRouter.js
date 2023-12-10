@@ -22,15 +22,10 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-router.post('/create', authMiddleWare, upload.array('images'), CarouselController.createCarousel);
-router.put(
-  '/update/:CarouselId',
-  authMiddleWare,
-  upload.array('images'),
-  CarouselController.updateCarousel,
-);
-router.delete('/delete/:CarouselId', authMiddleWare, CarouselController.deleteCarousel);
-router.post('/delete-many', authMiddleWare, CarouselController.deleteMany);
+router.post('/create', upload.array('images'), CarouselController.createCarousel);
+router.put('/update/:CarouselId', upload.array('images'), CarouselController.updateCarousel);
+router.delete('/delete/:CarouselId', CarouselController.deleteCarousel);
+router.post('/delete-many', CarouselController.deleteMany);
 
 router.get('/get-details/:CarouselId', CarouselController.getDetailsCarousel);
 router.get('/get-all', CarouselController.getAllCarousel);

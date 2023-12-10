@@ -16,7 +16,11 @@ const createCarousel = async (req, res) => {
     };
     const { error } = validationSchema.createCarouselSchemaBodyValidation(data);
     if (error) {
-      return res.status(400).json({ error: true, message: error.details[0].message });
+      return res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: error.details[0].message,
+      });
     }
 
     const response = await CarouselService.createCarousel(data);
@@ -102,8 +106,9 @@ const deleteMany = async (req, res) => {
     const ids = req.body.ids;
     if (!ids) {
       return res.status(400).json({
-        status: 'ERR',
-        message: 'The ids is required',
+        status: 'error',
+        statusCode: 400,
+        message: error.details[0].message,
       });
     }
     const response = await CarouselService.deleteManyCarousel(ids);

@@ -37,6 +37,8 @@ const updateProfileBodyValidation = (body) => {
     address: Joi.string().label('address'),
     avatar: Joi.string().label('avatar'),
     city: Joi.string().label('city'),
+    password: Joi.string().label('password'),
+    isAdmin: Joi.boolean().label('isAdmin'),
   });
   return schema.validate(body);
 };

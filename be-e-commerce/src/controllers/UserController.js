@@ -32,7 +32,11 @@ const forgotPasswordUser = async (req, res) => {
   try {
     const { error } = validationSchema.forgotPasswordSchemaBodyValidation(req.body);
     if (error) {
-      return res.status(400).json({ error: true, message: error.details[0].message });
+      return res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: error.details[0].message,
+      });
     }
 
     await UserService.forgotPasswordUser(req.body);
@@ -64,7 +68,11 @@ const createUser = async (req, res) => {
   try {
     const { error } = validationSchema.signUpBodyValidation(req.body);
     if (error) {
-      return res.status(400).json({ error: true, message: error.details[0].message });
+      return res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: error.details[0].message,
+      });
     }
 
     const response = await UserService.createUser(req.body);
@@ -80,6 +88,7 @@ const loginUser = async (req, res) => {
     if (error) {
       return res.status(400).json({
         status: 'error',
+        statusCode: 400,
         message: error.details[0].message,
       });
     }
@@ -99,7 +108,7 @@ const loginUser = async (req, res) => {
       return res.status(401).json(response);
     }
   } catch (e) {
-    return res.status(e.statusCode || 500).json({ ...e });
+    return res.status(e.statusCode || 500).json(e);
   }
 };
 
@@ -110,35 +119,37 @@ const updateUser = async (req, res) => {
       return res.status(400).json({
         status: 'error',
         statusCode: 400,
-        message: 'The userId is required',
+        message: 'Vui lòng cung cấp userId',
       });
     }
 
-    const imagePath = process.env.BASE_URL + '/uploads/users/' + req.file.filename;
     const data = {
       ...req.body,
-      avatar: imagePath,
     };
+
+    if (req.file) {
+      data.avatar = process.env.BASE_URL + '/uploads/users/' + req.file.filename;
+    }
 
     const { error } = validationSchema.updateProfileBodyValidation(data);
     if (error) {
       return res.status(400).json({
         status: 'error',
+        statusCode: 400,
         message: error.details[0].message,
       });
     }
 
     const response = await UserService.updateUser(userId, data);
-
-    if (response.status == 'OK') {
-      return res.status(200).json(response);
-    } else {
-      return res.status(401).json(response);
-    }
-  } catch (e) {
-    return res.status(404).json({
-      message: e,
+    return res.status(200).json({
+      status: 'success',
+      statusCode: 200,
+      message: 'Cập nhật thành công',
+      data: response,
     });
+  } catch (e) {
+    console.log(e);
+    return res.status(e.statusCode || 500).json(e);
   }
 };
 
@@ -146,21 +157,16 @@ const deleteUser = async (req, res) => {
   try {
     const userId = req.params.userId;
     if (!userId) {
-      return res.status(200).json({
-        status: 'ERR',
-        message: 'The userId is required',
+      return res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: 'Vui lòng cung cấp userId',
       });
     }
-    const response = await UserService.deleteUser(userId);
-    if (response.status == 'OK') {
-      return res.status(200).json(response);
-    } else {
-      return res.status(401).json(response);
-    }
+    await UserService.deleteUser(userId);
+    return res.status(204).send();
   } catch (e) {
-    return res.status(404).json({
-      message: e,
-    });
+    return res.status(e.statusCode || 500).json(e);
   }
 };
 

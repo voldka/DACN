@@ -22,7 +22,11 @@ const createComment = async (req, res) => {
 
     const { error } = validationSchema.commentSchemaValidation(data);
     if (error) {
-      return res.status(400).json({ error: true, message: error.details[0].message });
+      return res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: error.details[0].message,
+      });
     }
 
     const response = await CommentService.createComment(data);
