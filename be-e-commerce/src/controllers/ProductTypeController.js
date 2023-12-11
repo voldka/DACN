@@ -27,9 +27,9 @@ const ProductTypeController = {
       });
     } catch (error) {
       console.log(error);
-      return res.status(500).json({
+      return res.status(error.statusCode || 500).json({
         status: 'error',
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message,
       });
     }
@@ -46,9 +46,9 @@ const ProductTypeController = {
       });
     } catch (error) {
       console.log(error);
-      return res.status(500).json({
+      return res.status(error.statusCode || 500).json({
         status: 'error',
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message,
       });
     }
@@ -80,9 +80,9 @@ const ProductTypeController = {
       });
     } catch (error) {
       console.log(error);
-      return res.status(500).json({
+      return res.status(error.statusCode || 500).json({
         status: 'error',
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message,
       });
     }

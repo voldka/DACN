@@ -28,10 +28,7 @@ const uploadFile = multer({
 
 router.delete('/delete/:productTypeId', ProductTypeController.delete);
 router.patch('/update/:productTypeId', uploadFile.single('image'), ProductTypeController.update);
-
-router
-  .route('/')
-  .get(ProductTypeController.getAll)
-  .post(uploadFile.single('image'), ProductTypeController.create);
+router.post('/create', uploadFile.single('image'), ProductTypeController.create);
+router.route('/').get(ProductTypeController.getAll);
 
 module.exports = router;

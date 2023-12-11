@@ -2,11 +2,27 @@ const ProductTypes = require('../models/ProductType');
 
 module.exports = {
   create: (data) => {
-    return ProductTypes.create(data);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const carousel = await ProductTypes.create(data);
+        return resolve(carousel);
+      } catch (error) {
+        return reject(error);
+      }
+    });
   },
 
   getByName: (name) => {
-    return ProductTypes.findOne({ name: { $regex: new RegExp('^' + name + '$', 'i') } });
+    return new Promise(async (resolve, reject) => {
+      try {
+        const carousel = await ProductTypes.findOne({
+          name: { $regex: new RegExp('^' + name + '$', 'i') },
+        });
+        return resolve(carousel);
+      } catch (error) {
+        return reject(error);
+      }
+    });
   },
 
   getAll: () => {
