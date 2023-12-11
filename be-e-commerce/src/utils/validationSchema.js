@@ -1,7 +1,6 @@
 const Joi = require('joi');
 const passwordComplexity = require('joi-password-complexity');
 
-//ok
 const signUpBodyValidation = (body) => {
   const schema = Joi.object({
     name: Joi.string().required().label('name'),
@@ -42,6 +41,7 @@ const updateProfileBodyValidation = (body) => {
   });
   return schema.validate(body);
 };
+
 const createProductSchemaBodyValidation = (body) => {
   const schema = Joi.object({
     name: Joi.string().required().label('name'),
@@ -56,6 +56,7 @@ const createProductSchemaBodyValidation = (body) => {
   });
   return schema.validate(body);
 };
+
 const updateProductSchemaBodyValidation = (body) => {
   const schema = Joi.object({
     name: Joi.string().label('name'),
@@ -71,6 +72,7 @@ const updateProductSchemaBodyValidation = (body) => {
   });
   return schema.validate(body);
 };
+
 const createOrderSchemaBodyValidation = (body) => {
   const schema = Joi.object({
     orderItems: Joi.array().items(Joi.object()).required().label('orderItems'),
@@ -92,6 +94,7 @@ const createOrderSchemaBodyValidation = (body) => {
   });
   return schema.validate(body);
 };
+
 const changePasswordSchemaBodyValidation = (body) => {
   const schema = Joi.object({
     email: Joi.string().email().required().label('email'),
@@ -100,6 +103,7 @@ const changePasswordSchemaBodyValidation = (body) => {
   });
   return schema.validate(body);
 };
+
 const forgotPasswordSchemaBodyValidation = (body) => {
   const schema = Joi.object({
     email: Joi.string().email().required().label('email'),
@@ -112,14 +116,15 @@ const resetPasswordSchemaBodyValidation = (body) => {
   });
   return schema.validate(body);
 };
+
 const createCarouselSchemaBodyValidation = (body) => {
   const schema = Joi.object({
-    name: Joi.string().required().label('name'),
-    description: Joi.string().label('description'),
-    image: Joi.string().required().label('name'),
+    imageUrl: Joi.string().required().label('imageUrl'),
+    order: Joi.number().label('order'),
   });
   return schema.validate(body);
 };
+
 const commentSchemaValidation = (body) => {
   const schema = Joi.object({
     product: Joi.string().required().label('productId'),
@@ -129,6 +134,7 @@ const commentSchemaValidation = (body) => {
   });
   return schema.validate(body);
 };
+
 const ratingSchemaValidation = (body) => {
   const schema = Joi.object({
     userId: Joi.string().required().label('userId'),
@@ -137,6 +143,7 @@ const ratingSchemaValidation = (body) => {
   });
   return schema.validate(body);
 };
+
 module.exports = {
   signUpBodyValidation,
   logInBodyValidation,

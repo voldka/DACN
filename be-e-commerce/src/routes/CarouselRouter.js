@@ -3,8 +3,6 @@ const express = require('express');
 const router = express.Router();
 const CarouselController = require('../controllers/CarouselController');
 
-const { authMiddleWare } = require('../middleware/authMiddleware');
-
 const multer = require('multer');
 const path = require('path');
 const generateFilename = require('../utils/generateFilename');
@@ -22,9 +20,9 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-router.get('/', CarouselController.getAllCarousel);
-router.post('/create', upload.single('image'), CarouselController.createCarousel);
-router.put('/update/:carouselId', upload.single('image'), CarouselController.updateCarousel);
-router.delete('/delete/:carouselId', CarouselController.deleteCarousel);
+router.get('/', CarouselController.getAll);
+router.post('/create', upload.single('image'), CarouselController.create);
+router.patch('/update/:carouselId', upload.single('image'), CarouselController.update);
+router.delete('/delete/:carouselId', CarouselController.remove);
 
 module.exports = router;
