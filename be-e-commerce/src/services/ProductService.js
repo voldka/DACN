@@ -158,7 +158,11 @@ const createProduct = (data) => {
         name: data.name,
       });
       if (checkProduct !== null) {
-        return reject({ status: 'error', statusCode: 400, message: 'Tên sản phẩm đã tồn tại' });
+        return reject({
+          status: 'error',
+          statusCode: 400,
+          message: 'Tên sản phẩm đã tồn tại',
+        });
       }
       const newProduct = await Product.create(data);
       return resolve(newProduct);
@@ -295,43 +299,15 @@ const deleteManyProduct = (ids) => {
 const getDetailsProduct = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const product = await Product.findOne({
-        _id: id,
-      });
-      if (product === null) {
-        resolve({
-          status: 'ERR',
-          message: 'Không tìm thấy',
-          data: {
-            total: null,
-            pageCurrent: null,
-            totalPage: null,
-            userData: null,
-            productData: null,
-            orderData: null,
-            carouselData: null,
-            commentData: null,
-          },
-          access_token: null,
-          refresh_token: null,
+      const product = await Product.findById(id).populate('type');
+      if (!product) {
+        return reject({
+          status: 'error',
+          statusCode: 404,
+          message: `Không tìm thấy sản phẩm có ID: ${id}`,
         });
       }
-      resolve({
-        status: 'OK',
-        message: 'Complete',
-        data: {
-          total: null,
-          pageCurrent: null,
-          totalPage: null,
-          userData: null,
-          productData: product,
-          orderData: null,
-          carouselData: null,
-          commentData: null,
-        },
-        access_token: null,
-        refresh_token: null,
-      });
+      return resolve(product);
     } catch (e) {
       reject(e);
     }
@@ -343,6 +319,7 @@ const getAllProduct = (filter, page, pageSize) => {
     try {
       const totalProduct = await Product.countDocuments(filter);
       const allProducts = await Product.find(filter)
+        .populate('type')
         .limit(parseInt(pageSize, 10))
         .skip((page - 1) * pageSize)
         .sort({ createdAt: -1, updatedAt: -1 });
@@ -373,6 +350,33 @@ const getAllType = () => {
   });
 };
 
+const getRelevantProducts = (productId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const product = await Product.findById(productId);
+
+      if (!product) {
+        return reject({
+          status: 'error',
+          statusCode: 404,
+          message: `Không tìm thấy sản phẩm có ID: ${id}`,
+        });
+      }
+
+      const productType = product.type;
+
+      const revelations = await Product.find({
+        _id: { $ne: productId }, // Exclude the current product
+        type: productType,
+      }).limit(10);
+
+      return resolve(revelations);
+    } catch (error) {
+      return reject(error);
+    }
+  });
+};
+
 module.exports = {
   createProduct,
   updateProduct,
@@ -382,4 +386,5 @@ module.exports = {
   deleteManyProduct,
   getAllType,
   ratingProduct,
+  getRelevantProducts,
 };

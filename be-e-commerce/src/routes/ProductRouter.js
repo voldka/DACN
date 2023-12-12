@@ -6,7 +6,6 @@ const router = express.Router();
 
 const generateFilename = require('../utils/generateFilename');
 const ProductController = require('../controllers/ProductController');
-const { authMiddleWare } = require('../middleware/authMiddleware');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -29,6 +28,7 @@ router.delete('/delete/:productId', ProductController.deleteProduct);
 router.post('/delete-many', ProductController.deleteMany);
 
 router.get('/get-details/:productId', ProductController.getDetailsProduct);
+router.get('/get-relevant-products/:productId', ProductController.getRelevantProducts);
 router.get('/get-all', ProductController.getAllProduct);
 router.get('/get-all-type', ProductController.getAllType);
 

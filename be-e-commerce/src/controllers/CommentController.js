@@ -1,144 +1,93 @@
-const validationSchema = require('../utils/validationSchema');
-const CommentService = require('../services/CommentService');
-const createComment = async (req, res) => {
+const Comments = require('../models/CommentModel');
+
+const getCommentsByProductId = async (req, res) => {
   try {
-    const newImages = req.files.map(
-      (file) => process.env.BASE_URL + '/uploads/comments/' + file.filename.replace(/\s/g, ''),
-    );
-    let images = new Array();
-    images = images.concat(newImages);
-    let userId = req.params.userId;
-    if (!userId) {
-      return res.status(400).json({
-        status: 'ERR',
-        message: 'The userId is required',
-      });
-    }
-    const data = {
-      ...req.body,
+    const productId = req.params.productId;
+
+    const comments = await Comments.find({ product: productId })
+      .populate({ path: 'user', select: 'name avatar' })
+      .sort([['createdAt', 'desc']]);
+
+    return res.status(200).json({
+      status: 'success',
+      statusCode: 200,
+      data: comments,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 'error',
+      statusCode: 500,
+      message: 'Internal Server Error',
+    });
+  }
+};
+
+const create = async (req, res) => {
+  try {
+    const { productId, userId, content } = req.body;
+
+    const newComment = await Comments.create({
+      content,
       user: userId,
-      images: images,
-    };
+      product: productId,
+    });
 
-    const { error } = validationSchema.commentSchemaValidation(data);
-    if (error) {
-      return res.status(400).json({
-        status: 'error',
-        statusCode: 400,
-        message: error.details[0].message,
-      });
-    }
+    return res.status(200).json({
+      status: 'success',
+      statusCode: 200,
+      data: newComment,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 'error',
+      statusCode: 500,
+      message: 'Internal Server Error',
+    });
+  }
+};
 
-    const response = await CommentService.createComment(data);
-    return res.status(200).json(response);
-  } catch (error) {
-    return res.status(404).json({
-      message: error.message,
-    });
-  }
-};
-const updateComment = async (req, res) => {
+const update = async (req, res) => {
   try {
-    const id = req.params?.commemntId;
-    const userId = req.params?.userId;
-    if (!id || !userId) {
-      return res.status(400).json({
-        status: 'ERR',
-        message: 'The commentId and userId is required',
-      });
-    }
+    const commentId = req.params.commentId;
+    const { content } = req.body;
 
-    const newImages = req.files.map(
-      (file) => process.env.BASE_URL + '/uploads/comments/' + file.filename.replace(/\s/g, ''),
-    );
-    let images = new Array();
-    images = images.concat(newImages);
-    const data = {
-      ...req.body,
-      user: userId,
-      images: images,
-    };
-    const { error } = validationSchema.commentSchemaValidation(data);
-    if (error) return res.status(401).json({ error: true, message: error.details[0].message });
+    const updatedComment = await Comments.findByIdAndUpdate(commentId, { content }, { new: true });
 
-    const response = await CommentService.updateComment(id, data);
-    return res.status(200).json(response);
+    res.json({
+      status: 'success',
+      statusCode: 200,
+      data: updatedComment,
+    });
   } catch (error) {
-    return res.status(404).json({
-      message: error.message,
+    console.error(error);
+    res.status(500).json({
+      status: 'error',
+      statusCode: 500,
+      message: 'Internal Server Error',
     });
   }
 };
-const deleteComment = async (req, res) => {
+
+const remove = async (req, res) => {
   try {
-    const commentId = req.params.commemntId;
-    const userId = req.params.userId;
-    if (!commentId || !userId) {
-      return res.status(200).json({
-        status: 'ERR',
-        message: 'The commemntId and userId is required',
-      });
-    }
-    const response = await CommentService.deleteComment(commentId, userId);
-    return res.status(200).json(response);
+    const commentId = req.params.commentId;
+    await Comments.findByIdAndDelete(commentId);
+    return res.status(204).send();
   } catch (error) {
-    return res.status(404).json({
-      message: error.message,
+    console.error(error);
+    res.status(500).json({
+      status: 'error',
+      statusCode: 500,
+      message: 'Internal Server Error',
     });
   }
 };
-const getCommentOfUser = async (req, res) => {
-  try {
-    const { limit, page, sort, filter } = req.query;
-    const userId = req.params?.userId;
-    if (!userId) {
-      return res.status(200).json({
-        status: 'ERR',
-        message: 'The userId is required',
-      });
-    }
-    const response = await CommentService.getCommentOfUser(
-      userId,
-      Number(limit) || null,
-      Number(page) || 0,
-      sort,
-      filter,
-    );
-    return res.status(200).json(response);
-  } catch (error) {
-    return res.status(404).json({
-      message: error.message,
-    });
-  }
-};
-const getCommentsOfProduct = async (req, res) => {
-  try {
-    const { limit, page, sort, filter } = req.query;
-    const productId = req.params?.productId;
-    if (!productId) {
-      return res.status(200).json({
-        status: 'ERR',
-        message: 'The productId is required',
-      });
-    }
-    const response = await CommentService.getCommentsOfProduct(
-      productId,
-      Number(limit) || null,
-      Number(page) || 0,
-      sort,
-      filter,
-    );
-    return res.status(200).json(response);
-  } catch (error) {
-    return res.status(404).json({
-      message: error.message,
-    });
-  }
-};
+
 module.exports = {
-  createComment,
-  updateComment,
-  deleteComment,
-  getCommentOfUser,
-  getCommentsOfProduct,
+  create,
+  update,
+  remove,
+  getCommentsByProductId,
 };

@@ -1,4 +1,3 @@
-const { array } = require('joi');
 const ProductService = require('../services/ProductService');
 const validationSchema = require('../utils/validationSchema');
 
@@ -12,7 +11,13 @@ const ratingProduct = async (req, res) => {
       productId,
       starts,
     });
-    if (error) return res.status(401).json({ error: true, message: error.details[0].message });
+    if (error) {
+      return res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: error.details[0].message,
+      });
+    }
 
     const response = await ProductService.ratingProduct({
       productId,
@@ -32,12 +37,9 @@ const createProduct = async (req, res) => {
       (file) => process.env.BASE_URL + '/uploads/products/' + file.filename.replace(/\s/g, ''),
     );
 
-    let images = new Array();
-    images = images.concat(newImages);
-
     const data = {
       ...req.body,
-      image: images,
+      image: newImages,
     };
     const { error } = validationSchema.createProductSchemaBodyValidation(data);
     if (error) {
@@ -111,11 +113,14 @@ const getDetailsProduct = async (req, res) => {
       });
     }
     const response = await ProductService.getDetailsProduct(productId);
-    return res.status(200).json(response);
-  } catch (e) {
-    return res.status(404).json({
-      message: e,
+    return res.status(200).json({
+      status: 'success',
+      statusCode: 200,
+      data: response,
     });
+  } catch (e) {
+    console.log(e);
+    return res.status(e.statusCode || 500).json(e);
   }
 };
 
@@ -185,6 +190,28 @@ const getAllType = async (req, res) => {
   }
 };
 
+const getRelevantProducts = async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    if (!productId) {
+      return res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: 'Vui lòng cung cấp productId',
+      });
+    }
+    const response = await ProductService.getRelevantProducts(productId);
+    return res.status(200).json({
+      status: 'success',
+      statusCode: 200,
+      data: response,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(e.statusCode || 500).json(e);
+  }
+};
+
 module.exports = {
   createProduct,
   updateProduct,
@@ -194,4 +221,5 @@ module.exports = {
   deleteMany,
   getAllType,
   ratingProduct,
+  getRelevantProducts,
 };
