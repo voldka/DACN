@@ -22,6 +22,7 @@ app.use('/api/carousels', require('./routes/CarouselRouter'));
 app.use('/api/comment', require('./routes/CommentRouter'));
 app.use('/api/product-types', require('./routes/ProductTypeRouter'));
 app.use('/api/promotions', require('./routes/PromotionsRouter'));
+app.use('/api/cart', require('./routes/CartRouter'));
 
 mongo.connect();
 
