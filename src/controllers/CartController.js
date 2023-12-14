@@ -2,10 +2,10 @@ const CartService = require('../services/CartService');
 
 module.exports = {
   getCartByUserId: async (req, res) => {
-    let cart = await CartsService.getCartByUserId(req.params.userId);
+    let cart = await CartService.getCartByUserId(req.params.userId);
     if (!cart) {
       cart = await CartService.create({
-        userId: req.params.userId,
+        user: req.params.userId,
         products: [],
       });
     }
@@ -49,7 +49,7 @@ module.exports = {
       return results;
     }, []);
 
-    const updatedCart = await CartsService.updateCart(req.params.userId, {
+    const updatedCart = await CartService.updateCart(req.params.userId, {
       products: [...changedProducts, ...newProducts],
     });
 

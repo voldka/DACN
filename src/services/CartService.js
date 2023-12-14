@@ -16,16 +16,15 @@ module.exports = {
       .sort([['createdAt', 'desc']]);
     if (cart) {
       cart._doc.products = cart.products.map((item) => {
-        const { productId: productDetail, size, amount, image, _id } = item;
-        const priceDetail = productDetail._doc.prices.find((item) => item.size === size);
+        const { productId: productDetail, amount, image, _id } = item;
         return {
           _id,
           image,
           amount,
           productId: productDetail._doc._id,
           productName: productDetail._doc.name,
-          price: priceDetail.price,
-          totalPrice: priceDetail.price * amount,
+          price: productDetail.price,
+          totalPrice: productDetail.price * amount,
         };
       });
     }
@@ -45,17 +44,15 @@ module.exports = {
       .sort([['createdAt', 'desc']]);
     if (updatedCart) {
       updatedCart._doc.products = updatedCart.products.map((item) => {
-        const { productId: productDetail, size, amount, image, _id, comment } = item;
-        const priceDetail = productDetail._doc.prices.find((item) => item.size === size);
+        const { productId: productDetail, amount, image, _id } = item;
         return {
           _id,
           image,
           amount,
-          comment,
           productId: productDetail._doc._id,
           productName: productDetail._doc.name,
-          price: priceDetail.price,
-          totalPrice: priceDetail.price * amount,
+          price: productDetail.price,
+          totalPrice: productDetail.price * amount,
         };
       });
     }
