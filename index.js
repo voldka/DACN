@@ -23,6 +23,7 @@ app.use('/api/comment', require('./src/routes/CommentRouter'));
 app.use('/api/product-types', require('./src/routes/ProductTypeRouter'));
 app.use('/api/promotions', require('./src/routes/PromotionsRouter'));
 app.use('/api/cart', require('./src/routes/CartRouter'));
+app.use('/api/statistic', require('./src/routes/StatisticRouter'));
 
 mongo
   .connect()

@@ -207,7 +207,9 @@ const getAllUsers = () => {
     .sort([['createdAt', 'desc']]);
 };
 
-const getDetailsUser = (id) => {};
+const getDetailsUser = (id) => {
+  return User.findById(id).select({ __v: 0, password: 0 });
+};
 
 const forgotPasswordUser = (data) => {
   return new Promise(async (resolve, reject) => {
