@@ -141,12 +141,14 @@ const updateUser = async (req, res) => {
     }
 
     const response = await UserService.updateUser(userId, data);
-    response.id = response._id.toString();
     return res.status(200).json({
       status: 'success',
       statusCode: 200,
       message: 'Cập nhật thành công',
-      data: response,
+      data: {
+        id: response._id.toString(),
+        ...response._doc,
+      },
     });
   } catch (e) {
     console.log(e);
