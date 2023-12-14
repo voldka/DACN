@@ -141,6 +141,7 @@ const updateUser = async (req, res) => {
     }
 
     const response = await UserService.updateUser(userId, data);
+    response.id = response._id.toString();
     return res.status(200).json({
       status: 'success',
       statusCode: 200,
