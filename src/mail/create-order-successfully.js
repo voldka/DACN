@@ -143,7 +143,7 @@ const createOrderSuccessFullyMailTemplate = (order) => {
       </div>
 
       <div class="footer">
-        <p>Cảm ơn bạn đã LT - Handmade</p>
+        <p>Cảm ơn bạn đã tin tưởng LT - Handmade</p>
       </div>
     </div>
   </body>
