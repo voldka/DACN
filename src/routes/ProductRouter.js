@@ -23,7 +23,7 @@ const upload = multer({ storage });
 router.post('/rating/:userId/:productId', ProductController.ratingProduct);
 
 router.post('/create', upload.array('images'), ProductController.createProduct);
-router.put('/update/:productId', upload.array('images'), ProductController.updateProduct);
+router.put('/update/:productId', upload.array('newImages'), ProductController.updateProduct);
 router.delete('/delete/:productId', ProductController.deleteProduct);
 router.post('/delete-many', ProductController.deleteMany);
 

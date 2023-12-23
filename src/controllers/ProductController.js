@@ -74,15 +74,14 @@ const updateProduct = async (req, res) => {
       });
     }
 
+    const oldImages = JSON.parse(req.body.images);
     const newImages = req.files.map(
-      (file) => process.env.BASE_URL + '/uploads/product/' + file.filename.replace(/\s/g, ''),
+      (file) => process.env.BASE_URL + '/uploads/products/' + file.filename.replace(/\s/g, ''),
     );
-
-    const images = [].concat(newImages);
 
     const data = {
       ...req.body,
-      image: images,
+      image: [...oldImages, ...newImages],
     };
     const { error } = validationSchema.createProductSchemaBodyValidation(data);
     if (error) {

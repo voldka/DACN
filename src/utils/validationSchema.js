@@ -53,6 +53,7 @@ const createProductSchemaBodyValidation = (body) => {
     description: Joi.string().label('description'),
     discount: Joi.number().min(0).max(99).label('discount'),
     selled: Joi.number().min(0).label('selled'),
+    images: Joi.string(),
   });
   return schema.validate(body);
 };
